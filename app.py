@@ -140,13 +140,10 @@ def set_bg(image_path: str):
         pass
 
 
-def show_intro_animation(face_path: str, skull_path: str):
+def set_bg(image_path: str):
     try:
-        with open(face_path, "rb") as f:
-            face_data = base64.b64encode(f.read()).decode("utf-8")
-
-        with open(skull_path, "rb") as f:
-            skull_data = base64.b64encode(f.read()).decode("utf-8")
+        with open(image_path, "rb") as f:
+            data = base64.b64encode(f.read()).decode("utf-8")
 
         st.markdown(f"""
         <style>
@@ -154,111 +151,145 @@ def show_intro_animation(face_path: str, skull_path: str):
             background: #000 !important;
         }}
 
-        .kaja-intro {{
-            position: fixed;
-            inset: 0;
-            z-index: 2147483647;
-            background: #000 !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: introFadeOut 0.35s ease forwards;
-            animation-delay: 1.75s;
-            pointer-events: none;
+        .stApp {{
+            background-image: url("data:image/png;base64,{data}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            animation: appBgAppear 0.15s linear forwards;
+            animation-delay: 2.05s;
+            background-color: #000 !important;
         }}
 
-        .kaja-intro::before {{
+        .stApp::before {{
             content: "";
             position: fixed;
             inset: 0;
-            background: #000;
-            z-index: -1;
-        }}
-
-        .kaja-intro-inner {{
-            position: relative;
-            width: min(78vw, 560px);
-            height: min(84vh, 780px);
-        }}
-
-        .kaja-intro-img {{
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }}
-
-        .kaja-face {{
-            opacity: 1;
-            transform: scale(1.02);
-            animation: faceToSkull 1.65s ease-in-out forwards;
-        }}
-
-        .kaja-skull {{
+            background: linear-gradient(
+                rgba(0, 0, 0, 0.35) 0%,
+                rgba(0, 0, 0, 0.50) 40%,
+                rgba(0, 0, 0, 0.65) 100%
+            );
+            z-index: 0;
+            pointer-events: none;
             opacity: 0;
-            transform: scale(1.08);
-            animation: skullAppear 1.65s ease-in-out forwards;
+            animation: appOverlayAppear 0.15s linear forwards;
+            animation-delay: 2.05s;
         }}
 
-        @keyframes faceToSkull {{
-            0% {{
-                opacity: 1;
-                transform: scale(1.02);
-                filter: blur(0px) brightness(1);
+        @keyframes appBgAppear {{
+            from {{
+                background-image: none;
             }}
-            42% {{
-                opacity: 0.85;
-                transform: scale(1.04);
-                filter: blur(0px) brightness(1);
-            }}
-            68% {{
-                opacity: 0.25;
-                transform: scale(1.07);
-                filter: blur(1px) brightness(0.75);
-            }}
-            100% {{
-                opacity: 0;
-                transform: scale(1.1);
-                filter: blur(3px) brightness(0.45);
-            }}
-        }}
-
-        @keyframes skullAppear {{
-            0% {{
-                opacity: 0;
-                transform: scale(1.1);
-                filter: blur(4px) contrast(1.05);
-            }}
-            35% {{
-                opacity: 0;
-            }}
-            65% {{
-                opacity: 0.7;
-                transform: scale(1.06);
-                filter: blur(1px) contrast(1.12);
-            }}
-            100% {{
-                opacity: 1;
-                transform: scale(1.02);
-                filter: blur(0px) contrast(1.1);
-            }}
-        }}
-
-        @keyframes introFadeOut {{
             to {{
-                opacity: 0;
-                visibility: hidden;
+                background-image: url("data:image/png;base64,{data}");
             }}
+        }}
+
+        @keyframes appOverlayAppear {{
+            to {{
+                opacity: 1;
+            }}
+        }}
+
+        .main,
+        header,
+        footer,
+        [data-testid="stSidebar"] {{
+            position: relative;
+            z-index: 1;
+        }}
+
+        .buy-now-button {{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 34px;
+            margin: 10px 0 22px 0;
+            border-radius: 999px;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(255,255,255,0.14) 0%,
+                    rgba(255,255,255,0.02) 100%
+                ),
+                linear-gradient(
+                    135deg,
+                    #5a0505 0%,
+                    #8b0d0d 22%,
+                    #c1121f 55%,
+                    #e85d04 82%,
+                    #ffb703 100%
+                );
+
+            color: #ffffff !important;
+            font-weight: 800;
+            font-size: 18px;
+            text-decoration: none !important;
+            letter-spacing: 0.45px;
+
+            border: 1px solid rgba(255, 220, 160, 0.22);
+
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.16),
+                inset 0 -1px 0 rgba(0,0,0,0.25),
+                0 10px 24px rgba(80, 0, 0, 0.45),
+                0 4px 14px rgba(255, 122, 0, 0.22);
+
+            text-shadow:
+                0 1px 2px rgba(0,0,0,0.35),
+                0 0 8px rgba(255,255,255,0.08);
+
+            transition:
+                transform 0.22s ease,
+                box-shadow 0.22s ease,
+                filter 0.22s ease;
+
+            transform: translateY(0);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }}
+
+        .buy-now-button:visited,
+        .buy-now-button:link {{
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }}
+
+        .buy-now-button:hover {{
+            transform: translateY(-3px) scale(1.02);
+            color: #ffffff !important;
+            filter: brightness(1.08);
+
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.18),
+                inset 0 -1px 0 rgba(0,0,0,0.25),
+                0 16px 34px rgba(80, 0, 0, 0.55),
+                0 8px 18px rgba(255, 122, 0, 0.30);
+        }}
+
+        .buy-now-button:active {{
+            transform: translateY(1px) scale(0.99);
+        }}
+
+        .buy-now-button:focus,
+        .buy-now-button:focus-visible {{
+            outline: none !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.16),
+                inset 0 -1px 0 rgba(0,0,0,0.25),
+                0 10px 24px rgba(80, 0, 0, 0.45),
+                0 4px 14px rgba(255, 122, 0, 0.22);
         }}
         </style>
-
-        <div class="kaja-intro">
-            <div class="kaja-intro-inner">
-                <img class="kaja-intro-img kaja-face" src="data:image/png;base64,{face_data}">
-                <img class="kaja-intro-img kaja-skull" src="data:image/png;base64,{skull_data}">
-            </div>
-        </div>
         """, unsafe_allow_html=True)
 
     except FileNotFoundError:
