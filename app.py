@@ -423,7 +423,7 @@ if "messages" not in st.session_state:
 # ==========================================================
 # CHAT INPUT
 # ==========================================================
-question = st.chat_input(
+typed_question = st.chat_input(
     "Tutaj wpisz Twoje pytanie i naciśnij Enter lub kliknij strzałkę"
 )
 
@@ -488,6 +488,48 @@ if question and question.strip():
     })
 
     show_online()
+
+
+# ==========================================================
+# SUGGESTED QUESTIONS
+# ==========================================================
+st.markdown("""
+<style>
+.quick-question-title {
+    color: #FFE082;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 8px rgba(255,176,0,0.18);
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown(
+    '<div class="quick-question-title">⚡ Nie wiesz, od czego zacząć? Kliknij jedno z pytań:</div>',
+    unsafe_allow_html=True
+)
+
+quick_questions = [
+    "O czym jest Henryk Kaydan DELUXE 1?",
+    "Pokaż wszystkie okładki",
+    "Który wariant jest najrzadszy?",
+    "Czym różni się wersja hand-inked?",
+    "Ile kosztuje komiks?",
+    "Gdzie mogę go kupić?",
+]
+
+if "quick_question" not in st.session_state:
+    st.session_state.quick_question = None
+
+cols = st.columns(2)
+
+for i, q_button in enumerate(quick_questions):
+    with cols[i % 2]:
+        if st.button(q_button, use_container_width=True):
+            st.session_state.quick_question = q_button
+            st.rerun()
 
 # ==========================================================
 # DISPLAY CHAT HISTORY
