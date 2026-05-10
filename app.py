@@ -630,7 +630,7 @@ if "messages" not in st.session_state:
             "content": (
                 'Cześć! 👋 Jestem Kaja, wirtualna asystentka Jakuba Martewicza. '
                 'Chętnie opowiem Ci o jego najnowszym komiksie pt. "Henryk Kaydan" DELUXE 1 — '
-                'mogę też pokazać okładki lub przykłądowe plansze 🙂🔥'
+                'mogę też pokazać okładki lub przykładowe plansze 🙂🔥'
             ),
             "covers": []
         }
