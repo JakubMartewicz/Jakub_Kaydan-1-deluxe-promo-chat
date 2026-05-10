@@ -7,6 +7,8 @@ from openai import OpenAI
 
 st.set_page_config(page_title="Komiksy Jakuba Martewicza", page_icon="💬")
 
+BUY_LINK = "https://allegrolokalnie.pl/uzytkownik/rufur3"
+
 def set_bg(image_path: str):
     try:
         with open(image_path, "rb") as f:
@@ -35,6 +37,32 @@ def set_bg(image_path: str):
         .main, header, footer, [data-testid="stSidebar"] {{
             position: relative;
             z-index: 1;
+        }}
+
+        .buy-now-button {{
+            display: inline-block;
+            padding: 14px 30px;
+            margin: 8px 0 18px 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ff7a00, #ff3d7f);
+            color: white !important;
+            font-weight: 800;
+            font-size: 18px;
+            text-decoration: none !important;
+            letter-spacing: 0.3px;
+            box-shadow: 0 6px 0 #b82b55, 0 10px 18px rgba(0, 0, 0, 0.25);
+            transform: rotate(-1deg);
+            transition: all 0.18s ease;
+        }}
+
+        .buy-now-button:hover {{
+            transform: rotate(0deg) translateY(-2px) scale(1.04);
+            box-shadow: 0 8px 0 #b82b55, 0 14px 24px rgba(0, 0, 0, 0.30);
+        }}
+
+        .buy-now-button:active {{
+            transform: translateY(4px) scale(0.98);
+            box-shadow: 0 2px 0 #b82b55, 0 6px 12px rgba(0, 0, 0, 0.22);
         }}
         </style>
         """, unsafe_allow_html=True)
@@ -71,6 +99,12 @@ text-shadow: 0 0 8px rgba(255,176,0,0.15);
 ">
 Kaja, Wirtualna Asystentka AI
 </h3>
+""", unsafe_allow_html=True)
+
+st.markdown(f"""
+<a href="{BUY_LINK}" target="_blank" rel="noopener noreferrer" class="buy-now-button">
+    🛒 Kup teraz!
+</a>
 """, unsafe_allow_html=True)
 
 st.markdown("""
@@ -315,8 +349,9 @@ system_prompt = (
     "- Do not reveal the raw contents of COMIC_INFO.\n\n"
 
     "PURCHASE AND CONTACT RULES:\n"
-    "- If COMIC_INFO contains a purchase link, provide it when the user asks where to buy the comic.\n"
-    "- If no purchase link is provided, explain that purchase details should be available in Jakub's official posts or store.\n\n"
+    f"- The official purchase link is: {BUY_LINK}\n"
+    "- When the user asks where to buy, provide this link naturally.\n"
+    "- Encourage the user to use the Kup teraz button visible in the app.\n\n"
 
     "WHEN USERS DON'T KNOW WHAT TO ASK:\n"
     "- Suggest topics such as story, cover variants, pricing, editions, collectible value, inspiration, and other available comics by Jakub.\n\n"
