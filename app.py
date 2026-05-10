@@ -13,6 +13,7 @@ def set_bg(image_path: str):
     try:
         with open(image_path, "rb") as f:
             data = base64.b64encode(f.read()).decode("utf-8")
+
         st.markdown(f"""
         <style>
         .stApp {{
@@ -22,53 +23,88 @@ def set_bg(image_path: str):
             background-repeat: no-repeat;
             background-attachment: fixed;
         }}
+
         .stApp::before {{
             content: "";
             position: fixed;
             inset: 0;
             background: linear-gradient(
-                rgba(0,0,0,0.35) 0%,
-                rgba(0,0,0,0.50) 40%,
-                rgba(0,0,0,0.65) 100%
+                rgba(0, 0, 0, 0.35) 0%,
+                rgba(0, 0, 0, 0.50) 40%,
+                rgba(0, 0, 0, 0.65) 100%
             );
             z-index: 0;
             pointer-events: none;
         }}
-        .main, header, footer, [data-testid="stSidebar"] {{
+
+        .main,
+        header,
+        footer,
+        [data-testid="stSidebar"] {{
             position: relative;
             z-index: 1;
         }}
 
+        /* ===== ELEGANCKI PRZYCISK KUP TERAZ ===== */
         .buy-now-button {{
-            display: inline-block;
-            padding: 14px 30px;
-            margin: 8px 0 18px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 34px;
+            margin: 10px 0 22px 0;
             border-radius: 999px;
-            background: linear-gradient(135deg, #ff7a00, #ff3d7f);
-            color: white !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255,255,255,0.22),
+                    rgba(255,255,255,0.03)
+                ),
+                linear-gradient(
+                    135deg,
+                    #FFD36A 0%,
+                    #FF7A00 42%,
+                    #D91E5B 100%
+                );
+
+            color: #fff8e7 !important;
             font-weight: 800;
             font-size: 18px;
             text-decoration: none !important;
-            letter-spacing: 0.3px;
-            box-shadow: 0 6px 0 #b82b55, 0 10px 18px rgba(0, 0, 0, 0.25);
-            transform: rotate(-1deg);
-            transition: all 0.18s ease;
+            letter-spacing: 0.4px;
+
+            border: 1px solid rgba(255, 230, 160, 0.65);
+
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 10px 24px rgba(217, 30, 91, 0.35),
+                0 4px 14px rgba(255, 122, 0, 0.28);
+
+            transition: all 0.22s ease;
+            transform: translateY(0);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
         }}
 
         .buy-now-button:hover {{
-            transform: rotate(0deg) translateY(-2px) scale(1.04);
-            box-shadow: 0 8px 0 #b82b55, 0 14px 24px rgba(0, 0, 0, 0.30);
+            transform: translateY(-3px);
+            color: #ffffff !important;
+            filter: brightness(1.06);
+
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.14) inset,
+                0 14px 30px rgba(217, 30, 91, 0.48),
+                0 6px 18px rgba(255, 122, 0, 0.35);
         }}
 
         .buy-now-button:active {{
-            transform: translateY(4px) scale(0.98);
-            box-shadow: 0 2px 0 #b82b55, 0 6px 12px rgba(0, 0, 0, 0.22);
+            transform: translateY(1px) scale(0.99);
         }}
         </style>
         """, unsafe_allow_html=True)
+
     except FileNotFoundError:
         pass
-
 set_bg("assets/backgroundpic.png")
 
 st.markdown("""
@@ -103,7 +139,8 @@ Kaja, Wirtualna Asystentka AI
 
 st.markdown(f"""
 <a href="{BUY_LINK}" target="_blank" rel="noopener noreferrer" class="buy-now-button">
-    🛒 Kup teraz!
+    <span>🛒</span>
+    <span>Kup teraz</span>
 </a>
 """, unsafe_allow_html=True)
 
