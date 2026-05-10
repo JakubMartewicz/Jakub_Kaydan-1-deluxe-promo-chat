@@ -5,8 +5,13 @@ import base64
 import streamlit as st
 from openai import OpenAI
 
-st.set_page_config(page_title="Komiksy Jakuba Martewicza", page_icon="💬")
+st.set_page_config(
+    page_title="Komiksy Jakuba Martewicza",
+    page_icon="💬"
+)
 
+# Czarna zasłona startowa — ukrywa "mignięcie" pustego layoutu
+st.markdown("""
 <style>
 html, body, [data-testid="stAppViewContainer"], .stApp {
     background: #000 !important;
@@ -18,31 +23,8 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
     z-index: 2147483646;
     background: #000;
     pointer-events: none;
-    animation: startCoverFadeOut 0.2s ease forwards;
-    animation-delay: 1.25s;
-}
-
-@keyframes startCoverFadeOut {
-    to {
-        opacity: 0;
-        visibility: hidden;
-    }
-}
-</style>
-
-<div class="start-black-cover"></div>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<style>
-.start-black-cover {
-    position: fixed;
-    inset: 0;
-    z-index: 2147483646;
-    background: #000;
-    pointer-events: none;
     animation: startCoverFadeOut 0.25s ease forwards;
-    animation-delay: 1.9s;
+    animation-delay: 1.90s;
 }
 
 @keyframes startCoverFadeOut {
