@@ -586,6 +586,7 @@ show_online()
 api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
 feedback_text = get_secret("FEEDBACK_TEXT", "")
+youtube_link = get_secret("YOUTUBE_LINK")
 
 if not api_key:
     st.error("Brak OPENAI_API_KEY")
