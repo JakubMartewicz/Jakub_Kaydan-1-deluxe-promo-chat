@@ -514,14 +514,6 @@ Kaja, Wirtualna Asystentka AI
 """, unsafe_allow_html=True)
 
 
-st.markdown(f"""
-<a href="{buy_link}" target="_blank" rel="noopener noreferrer" class="buy-now-button">
-    <span>🛒</span>
-    <span>Kup teraz</span>
-</a>
-""", unsafe_allow_html=True)
-
-
 st.markdown("""
 <style>
 .pulse-dot {
