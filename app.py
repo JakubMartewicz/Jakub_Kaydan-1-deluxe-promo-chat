@@ -147,19 +147,17 @@ def set_bg(image_path: str):
 
         st.markdown(f"""
         <style>
-        html, body, .stApp {{
+        html, body {{
             background: #000 !important;
         }}
 
         .stApp {{
+            background-color: #000 !important;
             background-image: url("data:image/png;base64,{data}");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            animation: appBgAppear 0.15s linear forwards;
-            animation-delay: 2.05s;
-            background-color: #000 !important;
         }}
 
         .stApp::before {{
@@ -173,24 +171,6 @@ def set_bg(image_path: str):
             );
             z-index: 0;
             pointer-events: none;
-            opacity: 0;
-            animation: appOverlayAppear 0.15s linear forwards;
-            animation-delay: 2.05s;
-        }}
-
-        @keyframes appBgAppear {{
-            from {{
-                background-image: none;
-            }}
-            to {{
-                background-image: url("data:image/png;base64,{data}");
-            }}
-        }}
-
-        @keyframes appOverlayAppear {{
-            to {{
-                opacity: 1;
-            }}
         }}
 
         .main,
@@ -296,15 +276,94 @@ def set_bg(image_path: str):
         pass
 
 
+def show_intro_animation(face_path: str, skull_path: str):
+    try:
+        with open(face_path, "rb") as f:
+            face_data = base64.b64encode(f.read()).decode("utf-8")
+
+        with open(skull_path, "rb") as f:
+            skull_data = base64.b64encode(f.read()).decode("utf-8")
+
+        st.markdown(f"""
+        <style>
+        .kaja-intro {{
+            position: fixed;
+            inset: 0;
+            z-index: 2147483647;
+            background: #000 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: introFadeOut 0.35s ease forwards;
+            animation-delay: 1.75s;
+            pointer-events: none;
+        }}
+
+        .kaja-intro-inner {{
+            position: relative;
+            width: min(78vw, 560px);
+            height: min(84vh, 780px);
+        }}
+
+        .kaja-intro-img {{
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }}
+
+        .kaja-face {{
+            opacity: 1;
+            transform: scale(1.02);
+            animation: faceToSkull 1.65s ease-in-out forwards;
+        }}
+
+        .kaja-skull {{
+            opacity: 0;
+            transform: scale(1.08);
+            animation: skullAppear 1.65s ease-in-out forwards;
+        }}
+
+        @keyframes faceToSkull {{
+            0% {{ opacity: 1; transform: scale(1.02); filter: blur(0px) brightness(1); }}
+            42% {{ opacity: 0.85; transform: scale(1.04); filter: blur(0px) brightness(1); }}
+            68% {{ opacity: 0.25; transform: scale(1.07); filter: blur(1px) brightness(0.75); }}
+            100% {{ opacity: 0; transform: scale(1.1); filter: blur(3px) brightness(0.45); }}
+        }}
+
+        @keyframes skullAppear {{
+            0% {{ opacity: 0; transform: scale(1.1); filter: blur(4px) contrast(1.05); }}
+            35% {{ opacity: 0; }}
+            65% {{ opacity: 0.7; transform: scale(1.06); filter: blur(1px) contrast(1.12); }}
+            100% {{ opacity: 1; transform: scale(1.02); filter: blur(0px) contrast(1.1); }}
+        }}
+
+        @keyframes introFadeOut {{
+            to {{ opacity: 0; visibility: hidden; }}
+        }}
+        </style>
+
+        <div class="kaja-intro">
+            <div class="kaja-intro-inner">
+                <img class="kaja-intro-img kaja-face" src="data:image/png;base64,{face_data}">
+                <img class="kaja-intro-img kaja-skull" src="data:image/png;base64,{skull_data}">
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    except FileNotFoundError:
+        pass
+
+
+set_bg("assets/backgroundpic.png")
+
 if "intro_seen" not in st.session_state:
     show_intro_animation(
         "assets/intro/kaja_face.png",
         "assets/intro/kaja_skull.png"
     )
     st.session_state.intro_seen = True
-
-set_bg("assets/backgroundpic.png")
-
 
 st.markdown("""
 <h1 style="
