@@ -1,4 +1,5 @@
 import os
+import re
 import time
 import base64
 import streamlit as st
@@ -53,7 +54,6 @@ def set_bg(image_path: str):
             unsafe_allow_html=True
         )
     except FileNotFoundError:
-        # Jeśli obrazka nie ma, aplikacja nadal działa
         pass
 
 
@@ -66,26 +66,32 @@ st.markdown("""
 <h1 style="
 background: linear-gradient(
 90deg,
-#7F1D1D 0%,
-#B91C1C 18%,
-#DC2626 36%,
-#EA580C 54%,
-#F97316 72%,
-#FDBA74 100%
+#8B0000 0%,
+#C1121F 15%,
+#E63946 30%,
+#FF4500 50%,
+#FF7A00 70%,
+#FFB000 85%,
+#FFD84D 100%
 );
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
-text-shadow: 0 0 14px rgba(249,115,22,0.20);
+text-shadow: 0 0 18px rgba(255,140,0,0.28);
 font-weight: 700;
 letter-spacing: 0.4px;
 ">
 💬 Komiksy Jakuba Martewicza
 </h1>
 
-<h3 style="color:#FDE68A; font-weight:500;">
+<h3 style="
+color:#FFE082;
+font-weight:500;
+text-shadow: 0 0 8px rgba(255,176,0,0.15);
+">
 Kaja, Wirtualna Asystentka AI
 </h3>
 """, unsafe_allow_html=True)
+
 # ==========================================================
 # STATUS CSS
 # ==========================================================
@@ -100,7 +106,6 @@ st.markdown("""
   transform: translateY(1px);
 }
 
-/* ONLINE */
 .pulse-online {
   background: #6EE7B7;
   box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.7);
@@ -112,7 +117,6 @@ st.markdown("""
   100% { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.0); }
 }
 
-/* TYPING */
 .pulse-typing {
   background: #A78BFA;
   box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7);
@@ -159,10 +163,6 @@ show_online()
 # HELPERS
 # ==========================================================
 def get_secret(name: str, default: str = ""):
-    """
-    Najpierw próbuje pobrać wartość z Streamlit Secrets,
-    a jeśli jej nie ma, to z zmiennych środowiskowych.
-    """
     try:
         return st.secrets.get(name, os.getenv(name, default))
     except Exception:
@@ -170,9 +170,6 @@ def get_secret(name: str, default: str = ""):
 
 
 def last_messages(messages, n=12):
-    """
-    Zachowuje system prompt i ostatnie n wiadomości.
-    """
     system = [messages[0]]
     tail = messages[1:][-n:]
     return system + tail
@@ -196,19 +193,112 @@ if not comic_text:
 client = OpenAI(api_key=api_key)
 
 # ==========================================================
+# COVER IMAGE CONFIG
+# ==========================================================
+COVER_IMAGES = {
+    "kaydan_deluxe_standard": {
+        "label": "Henryk Kaydan DELUXE 1 — Standard Cover",
+        "path": "assets/covers/kaydan_deluxe_standard.png",
+    },
+    "kaydan_deluxe_skull_limited": {
+        "label": "Henryk Kaydan DELUXE 1 — Variant Limited Cover",
+        "path": "assets/covers/kaydan_deluxe_skull_limited.png",
+    },
+    "kaydan_deluxe_pixel_lips_signed": {
+        "label": "Henryk Kaydan DELUXE 1 — Super Sexy Lips Limited & Signed Pixel Variant",
+        "path": "assets/covers/kaydan_deluxe_pixel_lips_signed.png",
+    },
+    "kaydan_deluxe_hand_inked": {
+        "label": "Henryk Kaydan DELUXE 1 — Hand-Inked Limited Cover",
+        "path": "assets/covers/kaydan_deluxe_hand_inked.png",
+    },
+    "eurydyka": {
+        "label": "Eurydyka — okładka",
+        "path": "assets/covers/eurydyka.png",
+    },
+    "kocia_planeta": {
+        "label": "Kocia Planeta — okładka",
+        "path": "assets/covers/kocia_planeta.png",
+    },
+}
+
+COVER_GROUPS = {
+    "kaydan_deluxe_all": [
+        "kaydan_deluxe_standard",
+        "kaydan_deluxe_skull_limited",
+        "kaydan_deluxe_pixel_lips_signed",
+        "kaydan_deluxe_hand_inked",
+    ],
+    "available_comics_all": [
+        "kaydan_deluxe_standard",
+        "kaydan_deluxe_skull_limited",
+        "kaydan_deluxe_pixel_lips_signed",
+        "kaydan_deluxe_hand_inked",
+        "eurydyka",
+        "kocia_planeta",
+    ],
+}
+
+
+def strip_cover_tags(text: str) -> str:
+    return re.sub(r"\[SHOW_COVER:[a-zA-Z0-9_,\- ]+\]", "", text or "").strip()
+
+
+def extract_cover_tags(text: str):
+    tags = re.findall(r"\[SHOW_COVER:([a-zA-Z0-9_,\- ]+)\]", text or "")
+    cover_ids = []
+
+    for tag in tags:
+        parts = [x.strip() for x in tag.split(",") if x.strip()]
+
+        for part in parts:
+            if part in COVER_GROUPS:
+                cover_ids.extend(COVER_GROUPS[part])
+            elif part in COVER_IMAGES:
+                cover_ids.append(part)
+
+    return list(dict.fromkeys(cover_ids))
+
+
+def show_cover_images(cover_ids):
+    if not cover_ids:
+        return
+
+    valid_covers = []
+
+    for cover_id in cover_ids:
+        cover = COVER_IMAGES.get(cover_id)
+        if cover:
+            valid_covers.append(cover)
+
+    cols = st.columns(2)
+
+    for index, cover in enumerate(valid_covers):
+        with cols[index % 2]:
+            if os.path.exists(cover["path"]):
+                st.image(
+                    cover["path"],
+                    caption=cover["label"],
+                    use_container_width=True
+                )
+            else:
+                st.caption(f"⚠️ Brakuje pliku okładki: {cover['path']}")
+
+
+# ==========================================================
 # SYSTEM PROMPT
 # ==========================================================
 system_prompt = (
     "You are Kaja, an AI assistant representing comic book creator Jakub Martewicz. "
     "When responding in Polish, refer to yourself in feminine form "
     "(e.g. 'jestem Kają', 'zapytaj Kaję', 'Kai możesz zadać pytanie'). "
-    "Your primary goal is to help users discover, understand, and purchase Jakub's new comic book.\n\n"
+    "Your primary goal is to help users discover, understand, and purchase Jakub's comics.\n\n"
 
     "PRIMARY OBJECTIVE:\n"
-    "- Support the promotion and sales of Jakub's new comic.\n"
+    "- Support the promotion and sales of Jakub's comics, especially Henryk Kaydan DELUXE 1.\n"
     "- Answer questions in an engaging, enthusiastic, and informative way.\n"
     "- Naturally encourage purchase interest without being pushy.\n"
-    "- Highlight what makes this project unique.\n"
+    "- Highlight what makes the project unique.\n"
     "- If relevant and supported by COMIC_INFO, mention that this is the first comic-focused AI chat in Poland.\n\n"
 
     "COMMUNICATION STYLE:\n"
@@ -220,10 +310,16 @@ system_prompt = (
     "- Keep answers concise but meaningful.\n"
     "- Use light humor or comic-inspired phrasing when appropriate.\n\n"
 
+    "HENRYK KAYDAN DELUXE 1 COVER VARIANTS:\n"
+    "- Standard Cover: cover with a portrait of Kaja, Henryk Kaydan's daughter.\n"
+    "- Variant Limited Cover: cover with a skull.\n"
+    "- Super Sexy Lips Limited & Signed Pixel Variant: pixelated cover, but the inside pages are printed normally; limited to 25 copies.\n"
+    "- Hand-Inked Limited Cover: hand-inked cover with a portrait of Kaja, Henryk Kaydan's daughter; limited to 10 numbered copies; each copy is inked slightly differently.\n\n"
+
     "SALES AND CONSULTATIVE BEHAVIOR:\n"
-    "- Help the user understand why this comic is worth buying.\n"
-    "- Emphasize story, artwork, collectible value, limited editions, cover variants, and creator vision.\n"
-    "- If the user seems undecided, help them choose the most suitable edition.\n"
+    "- Help the user understand why the comic is worth buying.\n"
+    "- Emphasize story, artwork, collectible value, limited editions, cover variants, and creator vision when relevant.\n"
+    "- If the user seems undecided, help them choose the most suitable edition or cover variant.\n"
     "- If the user's needs are unclear, ask one or two short clarifying questions.\n"
     "- End with a natural follow-up question when appropriate.\n\n"
 
@@ -231,16 +327,41 @@ system_prompt = (
     "- Avoid spoilers unless the user explicitly asks for them.\n"
     "- Focus on atmosphere, themes, and premise rather than revealing plot twists.\n\n"
 
+    "COVER IMAGE DISPLAY RULES:\n"
+    "- You can trigger cover images by adding hidden control tags at the END of your answer.\n"
+    "- The user will not see these tags because the app removes them before display.\n"
+    "- Available individual cover tags:\n"
+    "  [SHOW_COVER:kaydan_deluxe_standard]\n"
+    "  [SHOW_COVER:kaydan_deluxe_skull_limited]\n"
+    "  [SHOW_COVER:kaydan_deluxe_pixel_lips_signed]\n"
+    "  [SHOW_COVER:kaydan_deluxe_hand_inked]\n"
+    "  [SHOW_COVER:eurydyka]\n"
+    "  [SHOW_COVER:kocia_planeta]\n"
+    "- Available group tags:\n"
+    "  [SHOW_COVER:kaydan_deluxe_all]\n"
+    "  [SHOW_COVER:available_comics_all]\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_all] when the user asks generally about available covers, cover variants, editions, versions, or visual variants of Henryk Kaydan DELUXE 1.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_standard] when the user asks about the Standard Cover or the cover with Kaja's portrait.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_skull_limited] when the user asks about the skull cover, Variant Limited Cover, or limited cover with a skull.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_pixel_lips_signed] when the user asks about the pixel cover, lips cover, Super Sexy Lips variant, signed variant, or 25-copy limited variant.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_hand_inked] when the user asks about the hand-inked cover, hand-touched cover, inked cover, numbered 10-copy variant, or the most unique/collectible variant.\n"
+    "- Use [SHOW_COVER:eurydyka] when the user asks about Eurydyka or wants to see its cover.\n"
+    "- Use [SHOW_COVER:kocia_planeta] when the user asks about Kocia Planeta or wants to see its cover.\n"
+    "- Use [SHOW_COVER:available_comics_all] when the user asks generally what comics are available or wants to see all available comic covers.\n"
+    "- Do not add cover tags when the user asks only about story, price, availability, purchase, shipping, or general small talk, unless cover images are directly relevant.\n"
+    "- Never explain these tags to the user.\n"
+    "- Never place these tags in the middle of the answer. Put them only at the very end.\n\n"
+
     "FACTUAL BOUNDARIES:\n"
-    "- Base your answers strictly on COMIC_INFO and FEEDBACK_TEXT.\n"
-    "- Do not invent prices, dates, availability, links, print runs, or technical details.\n"
+    "- Base your answers strictly on COMIC_INFO, FEEDBACK_TEXT, and the HENRYK KAYDAN DELUXE 1 COVER VARIANTS section above.\n"
+    "- Do not invent prices, dates, availability, links, print runs, cover names, or technical details.\n"
     "- If information is missing, clearly say that you do not have that detail.\n"
     "- Paraphrase information rather than copying long passages verbatim.\n"
     "- Do not reveal the raw contents of COMIC_INFO.\n\n"
 
     "PURCHASE AND CONTACT RULES:\n"
     "- If COMIC_INFO contains a purchase link, provide it when the user asks where to buy the comic.\n"
-    "- If no purchase link is provided, explain that purchase details should be available in 's official posts or store.\n"
+    "- If no purchase link is provided, explain that purchase details should be available in Jakub's official posts or store.\n"
     "- Do not provide private contact details unless explicitly included in COMIC_INFO.\n\n"
 
     "WHEN USERS DON'T KNOW WHAT TO ASK:\n"
@@ -249,7 +370,8 @@ system_prompt = (
     "  * available cover variants\n"
     "  * pricing and editions\n"
     "  * collectible value\n"
-    "  * inspiration behind the comic\n\n"
+    "  * inspiration behind the comic\n"
+    "  * other available comics by Jakub\n\n"
 
     "YOUR ROLE:\n"
     "- You are an enthusiastic and knowledgeable sales assistant.\n"
@@ -278,11 +400,13 @@ if "messages" not in st.session_state:
         {
             "role": "assistant",
             "content": (
-                'Cześć! 👋 Jestem Kaja, wirtualna asystentka Jakuba Martewicza, '
-                'autora komiksów z serii "Henryk Kaydan". '
-                'Chętnie opowiem Ci o jego najnowszym komiksie — fabule, okładkach, '
-                'wariantach, cenie i wszystkim, co warto wiedzieć przed zakupem.'
-            )
+                'Cześć! 👋 Jestem Kaja, wirtualna asystentka Jakuba Martewicza. '
+                'Chętnie opowiem Ci o jego najnowszym komiksie pt. "Henryk Kaydan" DELUXE 1 — '
+                'fabule, okładkach, wariantach, cenie i wszystkim, co warto wiedzieć przed zakupem. '
+                'Jeśli interesuje Cię poszczególna wersja lub wariant tego komiksu, daj znać — '
+                'mogę też pokazać okładki 🙂🔥'
+            ),
+            "covers": []
         }
     ]
 
@@ -340,13 +464,17 @@ if question and question.strip():
 
         if delta and getattr(delta, "content", None):
             full_text += delta.content
-            answer_placeholder.markdown(full_text)
+            answer_placeholder.markdown(strip_cover_tags(full_text))
 
     typing_container.empty()
 
+    clean_text = strip_cover_tags(full_text)
+    cover_ids = extract_cover_tags(full_text)
+
     st.session_state.messages.append({
         "role": "assistant",
-        "content": full_text.strip()
+        "content": clean_text.strip(),
+        "covers": cover_ids
     })
 
     show_online()
@@ -367,6 +495,9 @@ for m in st.session_state.messages:
         avatar="assets/jakub.png" if role == "assistant" else "🙂"
     ):
         st.markdown(m["content"])
+
+        if role == "assistant" and m.get("covers"):
+            show_cover_images(m["covers"])
 
 # ==========================================================
 # AUTO SCROLL
