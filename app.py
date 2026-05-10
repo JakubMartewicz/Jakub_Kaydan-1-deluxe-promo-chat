@@ -365,6 +365,9 @@ if "intro_seen" not in st.session_state:
     )
     st.session_state.intro_seen = True
 
+set_bg("assets/backgroundpic.png")
+
+
 st.markdown("""
 <h1 style="
 background: linear-gradient(
