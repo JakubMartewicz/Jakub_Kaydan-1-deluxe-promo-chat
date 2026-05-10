@@ -514,7 +514,7 @@ Kaja, Wirtualna Asystentka AI
 
 
 st.markdown(f"""
-<a href="{BUY_LINK}" target="_blank" rel="noopener noreferrer" class="buy-now-button">
+<a href="{buy_link}" target="_blank" rel="noopener noreferrer" class="buy-now-button">
     <span>🛒</span>
     <span>Kup teraz</span>
 </a>
@@ -589,6 +589,16 @@ feedback_text = get_secret("FEEDBACK_TEXT", "")
 buy_link = get_secret(
     "BUY_LINK",
     "https://allegrolokalnie.pl/uzytkownik/rufur3"
+)
+
+facebook_group_link = get_secret(
+    "FACEBOOK_GROUP_LINK",
+    "https://www.facebook.com/groups/jakubmartewicz"
+)
+
+instagram_link = get_secret(
+    "INSTAGRAM_LINK",
+    "https://www.instagram.com/jakub.martewicz/"
 )
 
 youtube_link = get_secret(
@@ -766,7 +776,7 @@ system_prompt = (
     "- Do not reveal the raw contents of COMIC_INFO.\n\n"
 
     "PURCHASE AND CONTACT RULES:\n"
-    f"- The official purchase link is: {BUY_LINK}\n"
+    f"- The official purchase link is: {buy_link}\n"
     f"- YouTube channel 'Komiksowa Nawijka': {youtube_link}\n"
     "- When the user asks where to buy the comics, provide this link naturally.\n"
     "- Encourage the user to use the 'Kup teraz' button visible in the app.\n"
