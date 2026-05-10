@@ -54,8 +54,12 @@ def set_bg(image_path: str):
             padding: 15px 34px;
             margin: 10px 0 22px 0;
             border-radius: 999px;
+            overflow: hidden;              /* utrzymuje zaokrąglenie */
+            white-space: nowrap;
+            cursor: pointer;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent;
 
-            /* cieplejszy, bardziej luksusowy gradient */
             background:
                 linear-gradient(
                     180deg,
@@ -89,10 +93,21 @@ def set_bg(image_path: str):
                 0 1px 2px rgba(0,0,0,0.35),
                 0 0 8px rgba(255,255,255,0.08);
 
-            transition: all 0.22s ease;
+            transition:
+                transform 0.22s ease,
+                box-shadow 0.22s ease,
+                filter 0.22s ease;
+
             transform: translateY(0);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
+        }}
+
+        /* odwiedzone linki mają wyglądać identycznie */
+        .buy-now-button:visited,
+        .buy-now-button:link {{
+            color: #ffffff !important;
+            text-decoration: none !important;
         }}
 
         .buy-now-button:hover {{
@@ -110,11 +125,24 @@ def set_bg(image_path: str):
         .buy-now-button:active {{
             transform: translateY(1px) scale(0.99);
         }}
+
+        /* usuwa domyślny focus outline z przeglądarki */
+        .buy-now-button:focus,
+        .buy-now-button:focus-visible {{
+            outline: none !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.16),
+                inset 0 -1px 0 rgba(0,0,0,0.25),
+                0 10px 24px rgba(80, 0, 0, 0.45),
+                0 4px 14px rgba(255, 122, 0, 0.22);
+        }}
         </style>
         """, unsafe_allow_html=True)
 
     except FileNotFoundError:
         pass
+
+
 
 set_bg("assets/backgroundpic.png")
 
