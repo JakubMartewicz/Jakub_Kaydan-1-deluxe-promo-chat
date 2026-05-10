@@ -45,7 +45,7 @@ def set_bg(image_path: str):
             z-index: 1;
         }}
 
-        /* ===== PREMIUM DARK RED BUTTON ===== */
+        /* ===== PREMIUM WARM RED BUTTON ===== */
         .buy-now-button {{
             display: inline-flex;
             align-items: center;
@@ -55,6 +55,7 @@ def set_bg(image_path: str):
             margin: 10px 0 22px 0;
             border-radius: 999px;
 
+            /* cieplejszy, bardziej luksusowy gradient */
             background:
                 linear-gradient(
                     180deg,
@@ -63,10 +64,11 @@ def set_bg(image_path: str):
                 ),
                 linear-gradient(
                     135deg,
-                    #4a0404 0%,
-                    #7a0b0b 28%,
-                    #b11226 65%,
-                    #e63946 100%
+                    #5a0505 0%,
+                    #8b0d0d 22%,
+                    #c1121f 55%,
+                    #e85d04 82%,
+                    #ffb703 100%
                 );
 
             color: #ffffff !important;
@@ -75,13 +77,13 @@ def set_bg(image_path: str):
             text-decoration: none !important;
             letter-spacing: 0.45px;
 
-            border: 1px solid rgba(255, 210, 210, 0.18);
+            border: 1px solid rgba(255, 220, 160, 0.22);
 
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.14),
+                inset 0 1px 0 rgba(255,255,255,0.16),
                 inset 0 -1px 0 rgba(0,0,0,0.25),
                 0 10px 24px rgba(80, 0, 0, 0.45),
-                0 4px 12px rgba(230, 57, 70, 0.22);
+                0 4px 14px rgba(255, 122, 0, 0.22);
 
             text-shadow:
                 0 1px 2px rgba(0,0,0,0.35),
@@ -102,7 +104,7 @@ def set_bg(image_path: str):
                 inset 0 1px 0 rgba(255,255,255,0.18),
                 inset 0 -1px 0 rgba(0,0,0,0.25),
                 0 16px 34px rgba(80, 0, 0, 0.55),
-                0 6px 16px rgba(230, 57, 70, 0.28);
+                0 8px 18px rgba(255, 122, 0, 0.30);
         }}
 
         .buy-now-button:active {{
@@ -113,7 +115,6 @@ def set_bg(image_path: str):
 
     except FileNotFoundError:
         pass
-
 
 set_bg("assets/backgroundpic.png")
 
