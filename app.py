@@ -832,9 +832,18 @@ if question and question.strip():
     cover_ids = extract_cover_tags(full_text)
     page_ids = extract_page_tags(full_text)
 
+    memory_note = ""
+
+    if cover_ids:
+        memory_note += f"\n\n[APP_MEMORY: In this response, the app displayed cover images: {', '.join(cover_ids)}.]"
+
+    if page_ids:
+        memory_note += f"\n\n[APP_MEMORY: In this response, the app displayed sample pages: {', '.join(page_ids)}.]"
+
     st.session_state.messages.append({
         "role": "assistant",
-        "content": clean_text.strip(),
+        "content": clean_text.strip() + memory_note,
+        "display_content": clean_text.strip(),
         "covers": cover_ids,
         "pages": page_ids
     })
