@@ -150,17 +150,29 @@ def show_intro_animation(face_path: str, skull_path: str):
 
         st.markdown(f"""
         <style>
+        html, body, .stApp {{
+            background: #000 !important;
+        }}
+
         .kaja-intro {{
             position: fixed;
             inset: 0;
-            z-index: 999999;
-            background: #000;
+            z-index: 2147483647;
+            background: #000 !important;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: introFadeOut 0.45s ease forwards;
-            animation-delay: 1.85s;
+            animation: introFadeOut 0.35s ease forwards;
+            animation-delay: 1.75s;
             pointer-events: none;
+        }}
+
+        .kaja-intro::before {{
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: -1;
         }}
 
         .kaja-intro-inner {{
@@ -180,21 +192,13 @@ def show_intro_animation(face_path: str, skull_path: str):
         .kaja-face {{
             opacity: 1;
             transform: scale(1.02);
-            animation: faceToSkull 1.75s ease-in-out forwards;
+            animation: faceToSkull 1.65s ease-in-out forwards;
         }}
 
         .kaja-skull {{
             opacity: 0;
             transform: scale(1.08);
-            animation: skullAppear 1.75s ease-in-out forwards;
-        }}
-
-        .kaja-intro-title {{
-            display: none;
-        }}
-
-        .kaja-intro-line {{
-            display: none;
+            animation: skullAppear 1.65s ease-in-out forwards;
         }}
 
         @keyframes faceToSkull {{
