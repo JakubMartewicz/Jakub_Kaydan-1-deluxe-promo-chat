@@ -13,6 +13,7 @@ st.set_page_config(
 )
 
 BUY_LINK = "https://allegrolokalnie.pl/uzytkownik/rufur3"
+buy_link = BUY_LINK
 
 
 def image_to_base64(image_path: str) -> str:
@@ -586,9 +587,9 @@ api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
 feedback_text = get_secret("FEEDBACK_TEXT", "")
 
-BUY_LINK = get_secret(
+buy_link = get_secret(
     "BUY_LINK",
-    "https://allegrolokalnie.pl/uzytkownik/rufur3"
+    BUY_LINK
 )
 
 facebook_group_link = get_secret(
