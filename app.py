@@ -481,6 +481,17 @@ if question and question.strip():
     clean_text = strip_cover_tags(full_text)
     cover_ids = extract_cover_tags(full_text)
 
+    speech_file = "kaja_response.mp3"
+
+    with client.audio.speech.with_streaming_response.create(
+        model="gpt-4o-mini-tts",
+        voice="nova",   # sprawdź też: shimmer, alloy, echo
+        input=clean_text,
+    ) as response:
+        response.stream_to_file(speech_file)
+    
+    st.audio(speech_file, format="audio/mp3")
+
     st.session_state.messages.append({
         "role": "assistant",
         "content": clean_text.strip(),
