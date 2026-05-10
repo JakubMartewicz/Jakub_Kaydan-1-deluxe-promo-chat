@@ -9,14 +9,25 @@ st.set_page_config(page_title="Komiksy Jakuba Martewicza", page_icon="💬")
 
 st.markdown("""
 <style>
-html, body, .stApp {
-    background: #000 !important;
+.start-black-cover {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483646;
+    background: #000;
+    pointer-events: none;
+    animation: startCoverFadeOut 0.25s ease forwards;
+    animation-delay: 1.9s;
 }
 
-[data-testid="stAppViewContainer"] {
-    background: #000 !important;
+@keyframes startCoverFadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 }
 </style>
+
+<div class="start-black-cover"></div>
 """, unsafe_allow_html=True)
 
 BUY_LINK = "https://allegrolokalnie.pl/uzytkownik/rufur3"
