@@ -630,9 +630,7 @@ if "messages" not in st.session_state:
             "content": (
                 'Cześć! 👋 Jestem Kaja, wirtualna asystentka Jakuba Martewicza. '
                 'Chętnie opowiem Ci o jego najnowszym komiksie pt. "Henryk Kaydan" DELUXE 1 — '
-                'fabule, okładkach, wariantach, cenie i wszystkim, co warto wiedzieć przed zakupem. '
-                'Jeśli interesuje Cię poszczególna wersja lub wariant tego komiksu, daj znać — '
-                'mogę też pokazać okładki 🙂🔥'
+                'mogę też pokazać okładki lub przykłądowe plansze 🙂🔥'
             ),
             "covers": []
         }
