@@ -575,67 +575,6 @@ def show_typing():
 
 show_online()
 
-# ===== PRZYCISK "RESETUJ ROZMOWĘ" – CIEPŁY CIEMNONIEBIESKI =====
-st.markdown("""
-<style>
-div[data-testid="stButton"] > button {
-    background: linear-gradient(
-        135deg,
-        #0B1F3A 0%,
-        #123A63 35%,
-        #1E5A8A 70%,
-        #2A78A6 100%
-    ) !important;
-
-    color: #EAF6FF !important;
-    border: 1px solid rgba(180, 220, 255, 0.22) !important;
-    border-radius: 999px !important;
-
-    padding: 0.65rem 1.6rem !important;
-    font-weight: 700 !important;
-    font-size: 15px !important;
-    letter-spacing: 0.3px !important;
-
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
-        inset 0 -1px 0 rgba(0,0,0,0.25),
-        0 8px 20px rgba(0, 40, 90, 0.35),
-        0 4px 10px rgba(60, 140, 220, 0.12);
-
-    text-shadow:
-        0 1px 2px rgba(0,0,0,0.35);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        filter 0.2s ease;
-}
-
-div[data-testid="stButton"] > button:hover {
-    transform: translateY(-2px) scale(1.02);
-    filter: brightness(1.08);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.14),
-        inset 0 -1px 0 rgba(0,0,0,0.25),
-        0 12px 28px rgba(0, 40, 90, 0.45),
-        0 6px 14px rgba(80, 170, 255, 0.18);
-}
-
-div[data-testid="stButton"] > button:active {
-    transform: translateY(1px) scale(0.99);
-}
-
-div[data-testid="stButton"] > button:focus,
-div[data-testid="stButton"] > button:focus-visible {
-    outline: none !important;
-    box-shadow:
-        0 0 0 2px rgba(120, 190, 255, 0.25),
-        0 8px 20px rgba(0, 40, 90, 0.35);
-}
-</style>
-""", unsafe_allow_html=True)
-
 api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
 feedback_text = get_secret("FEEDBACK_TEXT", "")
