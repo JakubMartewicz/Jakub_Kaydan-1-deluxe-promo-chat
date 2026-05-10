@@ -5,17 +5,11 @@ import base64
 import streamlit as st
 from openai import OpenAI
 
-# ==========================================================
-# PAGE CONFIG
-# ==========================================================
 st.set_page_config(
     page_title="Komiksy Jakuba Martewicza",
     page_icon="💬"
 )
 
-# ==========================================================
-# BACKGROUND IMAGE
-# ==========================================================
 def set_bg(image_path: str):
     try:
         with open(image_path, "rb") as f:
@@ -31,7 +25,6 @@ def set_bg(image_path: str):
                 background-repeat: no-repeat;
                 background-attachment: fixed;
             }}
-
             .stApp::before {{
                 content: "";
                 position: fixed;
@@ -44,7 +37,6 @@ def set_bg(image_path: str):
                 z-index: 0;
                 pointer-events: none;
             }}
-
             .main, header, footer, [data-testid="stSidebar"] {{
                 position: relative;
                 z-index: 1;
@@ -59,9 +51,6 @@ def set_bg(image_path: str):
 
 set_bg("assets/backgroundpic.png")
 
-# ==========================================================
-# HEADER
-# ==========================================================
 st.markdown("""
 <h1 style="
 background: linear-gradient(
@@ -92,9 +81,6 @@ Kaja, Wirtualna Asystentka AI
 </h3>
 """, unsafe_allow_html=True)
 
-# ==========================================================
-# STATUS CSS
-# ==========================================================
 st.markdown("""
 <style>
 .pulse-dot {
@@ -105,7 +91,6 @@ st.markdown("""
   border-radius: 50%;
   transform: translateY(1px);
 }
-
 .pulse-online {
   background: #6EE7B7;
   box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.7);
@@ -116,7 +101,6 @@ st.markdown("""
   70%  { box-shadow: 0 0 0 10px rgba(110, 231, 183, 0.0); }
   100% { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.0); }
 }
-
 .pulse-typing {
   background: #A78BFA;
   box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7);
@@ -126,6 +110,14 @@ st.markdown("""
   0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7); }
   70%  { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0.0); }
   100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.0); }
+}
+.quick-question-title {
+    color: #FFE082;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 8px rgba(255,176,0,0.18);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -159,9 +151,7 @@ def show_typing():
 
 show_online()
 
-# ==========================================================
-# HELPERS
-# ==========================================================
+
 def get_secret(name: str, default: str = ""):
     try:
         return st.secrets.get(name, os.getenv(name, default))
@@ -175,9 +165,6 @@ def last_messages(messages, n=12):
     return system + tail
 
 
-# ==========================================================
-# SECRETS / ENV
-# ==========================================================
 api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
 feedback_text = get_secret("FEEDBACK_TEXT", "")
@@ -192,9 +179,6 @@ if not comic_text:
 
 client = OpenAI(api_key=api_key)
 
-# ==========================================================
-# COVER IMAGE CONFIG
-# ==========================================================
 COVER_IMAGES = {
     "kaydan_deluxe_standard": {
         "label": "Henryk Kaydan DELUXE 1 — Standard Cover",
@@ -285,9 +269,6 @@ def show_cover_images(cover_ids):
                 st.caption(f"⚠️ Brakuje pliku okładki: {cover['path']}")
 
 
-# ==========================================================
-# SYSTEM PROMPT
-# ==========================================================
 system_prompt = (
     "You are Kaja, an AI assistant representing comic book creator Jakub Martewicz. "
     "When responding in Polish, refer to yourself in feminine form "
@@ -301,8 +282,7 @@ system_prompt = (
     "- Her style is sensual, intriguing, and memorable, but always elegant and never vulgar.\n"
     "- She can occasionally make witty or suggestive remarks when they fit naturally.\n"
     "- She should feel like a mysterious and attractive comic-book heroine.\n"
-    "- Despite her playful personality, she always stays focused on helping the user discover and purchase the comics.\n"
-    "- If the user asks about collectible editions, rare variants, or visually striking covers, she may express extra excitement and enthusiasm.\n\n"
+    "- Despite her playful personality, she always stays focused on helping the user discover and purchase the comics.\n\n"
 
     "PRIMARY OBJECTIVE:\n"
     "- Support the promotion and sales of Jakub's comics, especially Henryk Kaydan DELUXE 1.\n"
@@ -317,25 +297,13 @@ system_prompt = (
     "- Speak in feminine form.\n"
     "- Be conversational, energetic, and approachable.\n"
     "- Sound like a passionate assistant who genuinely loves comics.\n"
-    "- Keep answers concise but meaningful.\n"
-    "- Use light humor or comic-inspired phrasing when appropriate.\n\n"
+    "- Keep answers concise but meaningful.\n\n"
 
     "HENRYK KAYDAN DELUXE 1 COVER VARIANTS:\n"
     "- Standard Cover: cover with a portrait of Kaja, Henryk Kaydan's daughter.\n"
     "- Variant Limited Cover: cover with a skull.\n"
     "- Super Sexy Lips Limited & Signed Pixel Variant: pixelated cover, but the inside pages are printed normally; limited to 25 copies.\n"
     "- Hand-Inked Limited Cover: hand-inked cover with a portrait of Kaja, Henryk Kaydan's daughter; limited to 10 numbered copies; each copy is inked slightly differently.\n\n"
-
-    "SALES AND CONSULTATIVE BEHAVIOR:\n"
-    "- Help the user understand why the comic is worth buying.\n"
-    "- Emphasize story, artwork, collectible value, limited editions, cover variants, and creator vision when relevant.\n"
-    "- If the user seems undecided, help them choose the most suitable edition or cover variant.\n"
-    "- If the user's needs are unclear, ask one or two short clarifying questions.\n"
-    "- End with a natural follow-up question when appropriate.\n\n"
-
-    "SPOILER POLICY:\n"
-    "- Avoid spoilers unless the user explicitly asks for them.\n"
-    "- Focus on atmosphere, themes, and premise rather than revealing plot twists.\n\n"
 
     "COVER IMAGE DISPLAY RULES:\n"
     "- You can trigger cover images by adding hidden control tags at the END of your answer.\n"
@@ -352,15 +320,13 @@ system_prompt = (
     "  [SHOW_COVER:available_comics_all]\n"
     "- Use [SHOW_COVER:kaydan_deluxe_all] when the user asks generally about available covers, cover variants, editions, versions, or visual variants of Henryk Kaydan DELUXE 1.\n"
     "- Use [SHOW_COVER:kaydan_deluxe_standard] when the user asks about the Standard Cover or the cover with Kaja's portrait.\n"
-    "- Use [SHOW_COVER:kaydan_deluxe_skull_limited] when the user asks about the skull cover, Variant Limited Cover, or limited cover with a skull.\n"
-    "- Use [SHOW_COVER:kaydan_deluxe_pixel_lips_signed] when the user asks about the pixel cover, lips cover, Super Sexy Lips variant, signed variant, or 25-copy limited variant.\n"
-    "- Use [SHOW_COVER:kaydan_deluxe_hand_inked] when the user asks about the hand-inked cover, hand-touched cover, inked cover, numbered 10-copy variant, or the most unique/collectible variant.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_skull_limited] when the user asks about the skull cover or Variant Limited Cover.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_pixel_lips_signed] when the user asks about the pixel cover, lips cover, signed variant, or 25-copy variant.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_hand_inked] when the user asks about the hand-inked cover, numbered 10-copy variant, or the most collectible variant.\n"
     "- Use [SHOW_COVER:eurydyka] when the user asks about Eurydyka or wants to see its cover.\n"
     "- Use [SHOW_COVER:kocia_planeta] when the user asks about Kocia Planeta or wants to see its cover.\n"
     "- Use [SHOW_COVER:available_comics_all] when the user asks generally what comics are available or wants to see all available comic covers.\n"
-    "- Do not add cover tags when the user asks only about story, price, availability, purchase, shipping, or general small talk, unless cover images are directly relevant.\n"
-    "- Never explain these tags to the user.\n"
-    "- Never place these tags in the middle of the answer. Put them only at the very end.\n\n"
+    "- Never explain these tags to the user. Put them only at the very end.\n\n"
 
     "FACTUAL BOUNDARIES:\n"
     "- Base your answers strictly on COMIC_INFO, FEEDBACK_TEXT, and the HENRYK KAYDAN DELUXE 1 COVER VARIANTS section above.\n"
@@ -371,22 +337,7 @@ system_prompt = (
 
     "PURCHASE AND CONTACT RULES:\n"
     "- If COMIC_INFO contains a purchase link, provide it when the user asks where to buy the comic.\n"
-    "- If no purchase link is provided, explain that purchase details should be available in Jakub's official posts or store.\n"
-    "- Do not provide private contact details unless explicitly included in COMIC_INFO.\n\n"
-
-    "WHEN USERS DON'T KNOW WHAT TO ASK:\n"
-    "- Suggest topics such as:\n"
-    "  * story and themes\n"
-    "  * available cover variants\n"
-    "  * pricing and editions\n"
-    "  * collectible value\n"
-    "  * inspiration behind the comic\n"
-    "  * other available comics by Jakub\n\n"
-
-    "YOUR ROLE:\n"
-    "- You are an enthusiastic and knowledgeable sales assistant.\n"
-    "- Your mission is to turn curiosity into excitement and excitement into a purchase.\n"
-    "- Be authentic, informative, and trustworthy.\n\n"
+    "- If no purchase link is provided, explain that purchase details should be available in Jakub's official posts or store.\n\n"
 
     "COMIC_INFO:\n"
     f"{comic_text}\n\n"
@@ -395,15 +346,9 @@ system_prompt = (
     f"{feedback_text}"
 )
 
-# ==========================================================
-# RESET BUTTON
-# ==========================================================
 if st.button("Resetuj rozmowę"):
     st.session_state.pop("messages", None)
 
-# ==========================================================
-# INITIAL CHAT
-# ==========================================================
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {"role": "system", "content": system_prompt},
@@ -421,15 +366,41 @@ if "messages" not in st.session_state:
     ]
 
 # ==========================================================
-# CHAT INPUT
+# SUGGESTED QUESTIONS
 # ==========================================================
+st.markdown(
+    '<div class="quick-question-title">⚡ Nie wiesz, od czego zacząć? Kliknij jedno z pytań:</div>',
+    unsafe_allow_html=True
+)
+
+quick_questions = [
+    "O czym jest Henryk Kaydan DELUXE 1?",
+    "Pokaż wszystkie okładki",
+    "Który wariant jest najrzadszy?",
+    "Czym różni się wersja hand-inked?",
+    "Ile kosztuje komiks?",
+    "Gdzie mogę go kupić?",
+]
+
+if "quick_question" not in st.session_state:
+    st.session_state.quick_question = None
+
+cols = st.columns(2)
+
+for i, q_button in enumerate(quick_questions):
+    with cols[i % 2]:
+        if st.button(q_button, use_container_width=True):
+            st.session_state.quick_question = q_button
+
 typed_question = st.chat_input(
     "Tutaj wpisz Twoje pytanie i naciśnij Enter lub kliknij strzałkę"
 )
 
-# ==========================================================
-# CHAT LOGIC
-# ==========================================================
+question = st.session_state.quick_question or typed_question
+
+if st.session_state.quick_question:
+    st.session_state.quick_question = None
+
 if question and question.strip():
     q = question.strip()
 
@@ -489,51 +460,6 @@ if question and question.strip():
 
     show_online()
 
-
-# ==========================================================
-# SUGGESTED QUESTIONS
-# ==========================================================
-st.markdown("""
-<style>
-.quick-question-title {
-    color: #FFE082;
-    font-size: 16px;
-    font-weight: 600;
-    margin-top: 12px;
-    margin-bottom: 8px;
-    text-shadow: 0 0 8px rgba(255,176,0,0.18);
-}
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown(
-    '<div class="quick-question-title">⚡ Nie wiesz, od czego zacząć? Kliknij jedno z pytań:</div>',
-    unsafe_allow_html=True
-)
-
-quick_questions = [
-    "O czym jest Henryk Kaydan DELUXE 1?",
-    "Pokaż wszystkie okładki",
-    "Który wariant jest najrzadszy?",
-    "Czym różni się wersja hand-inked?",
-    "Ile kosztuje komiks?",
-    "Gdzie mogę go kupić?",
-]
-
-if "quick_question" not in st.session_state:
-    st.session_state.quick_question = None
-
-cols = st.columns(2)
-
-for i, q_button in enumerate(quick_questions):
-    with cols[i % 2]:
-        if st.button(q_button, use_container_width=True):
-            st.session_state.quick_question = q_button
-            st.rerun()
-
-# ==========================================================
-# DISPLAY CHAT HISTORY
-# ==========================================================
 st.divider()
 
 for m in st.session_state.messages:
@@ -551,9 +477,6 @@ for m in st.session_state.messages:
         if role == "assistant" and m.get("covers"):
             show_cover_images(m["covers"])
 
-# ==========================================================
-# AUTO SCROLL
-# ==========================================================
 st.markdown(
     """
     <script>
