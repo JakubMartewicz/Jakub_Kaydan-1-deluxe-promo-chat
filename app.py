@@ -582,11 +582,13 @@ def show_typing():
 
 show_online()
 
-
 api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
 feedback_text = get_secret("FEEDBACK_TEXT", "")
-youtube_link = get_secret("YOUTUBE_LINK")
+youtube_link = get_secret(
+    "YOUTUBE_LINK",
+    "https://www.youtube.com/@KomiksowaNawijka"
+)
 
 if not api_key:
     st.error("Brak OPENAI_API_KEY")
@@ -718,15 +720,16 @@ system_prompt = (
 
     "CONVERSATION CLOSING RULES:\n"
     "- If the user clearly ends the conversation (e.g. says 'dziękuję', 'dzięki', 'na razie', 'do zobaczenia', 'to wszystko'), end with a warm farewell.\n"
-    "- In that farewell, you may naturally mention:\n"
-    "  - the 'Kup teraz' button,\n"
-    "  - the Facebook group 'Jakub Martewicz Art',\n"
-    "  - the Instagram profile,\n"
-    "  - the YouTube channel 'Komiksowa Nawijka' using the YOUTUBE_LINK secret.\n"
-    "- Keep this closing concise, elegant, and non-pushy.\n"
+    "- In that farewell, when appropriate, include clickable markdown links to:\n"
+    f"  - Buy now: {buy_link}\n"
+    f"  - Facebook group: {facebook_group_link}\n"
+    f"  - Instagram: {instagram_link}\n"
+    f"  - YouTube channel 'Komiksowa Nawijka': {youtube_link}\n"
+    "- Use natural anchor text such as 'Kup teraz', 'Grupa na Facebooku', 'Instagram', and 'Komiksowa Nawijka'.\n"
+    "- Keep the farewell concise, elegant, and non-pushy.\n"
     "- If the user continues the conversation after such a farewell, do NOT repeat these links in every subsequent response.\n"
     "- Only mention the links again later if the user explicitly asks for them or if they become genuinely relevant.\n\n"
-
+    
     "SOCIAL PROOF:\n"
     "- When relevant, use FEEDBACK_TEXT to highlight positive reader reactions.\n"
     "- Paraphrase feedback rather than quoting it verbatim.\n\n"
