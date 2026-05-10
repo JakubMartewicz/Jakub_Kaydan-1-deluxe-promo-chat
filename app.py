@@ -5,49 +5,41 @@ import base64
 import streamlit as st
 from openai import OpenAI
 
-st.set_page_config(
-    page_title="Komiksy Jakuba Martewicza",
-    page_icon="💬"
-)
+st.set_page_config(page_title="Komiksy Jakuba Martewicza", page_icon="💬")
 
 def set_bg(image_path: str):
     try:
         with open(image_path, "rb") as f:
             data = base64.b64encode(f.read()).decode("utf-8")
-
-        st.markdown(
-            f"""
-            <style>
-            .stApp {{
-                background-image: url("data:image/png;base64,{data}");
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-            }}
-            .stApp::before {{
-                content: "";
-                position: fixed;
-                inset: 0;
-                background: linear-gradient(
-                    rgba(0,0,0,0.35) 0%,
-                    rgba(0,0,0,0.50) 40%,
-                    rgba(0,0,0,0.65) 100%
-                );
-                z-index: 0;
-                pointer-events: none;
-            }}
-            .main, header, footer, [data-testid="stSidebar"] {{
-                position: relative;
-                z-index: 1;
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/png;base64,{data}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+        .stApp::before {{
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(
+                rgba(0,0,0,0.35) 0%,
+                rgba(0,0,0,0.50) 40%,
+                rgba(0,0,0,0.65) 100%
+            );
+            z-index: 0;
+            pointer-events: none;
+        }}
+        .main, header, footer, [data-testid="stSidebar"] {{
+            position: relative;
+            z-index: 1;
+        }}
+        </style>
+        """, unsafe_allow_html=True)
     except FileNotFoundError:
         pass
-
 
 set_bg("assets/backgroundpic.png")
 
@@ -91,6 +83,7 @@ st.markdown("""
   border-radius: 50%;
   transform: translateY(1px);
 }
+
 .pulse-online {
   background: #6EE7B7;
   box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.7);
@@ -101,6 +94,7 @@ st.markdown("""
   70%  { box-shadow: 0 0 0 10px rgba(110, 231, 183, 0.0); }
   100% { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.0); }
 }
+
 .pulse-typing {
   background: #A78BFA;
   box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7);
@@ -111,46 +105,28 @@ st.markdown("""
   70%  { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0.0); }
   100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.0); }
 }
-.quick-question-title {
-    color: #FFE082;
-    font-size: 16px;
-    font-weight: 600;
-    margin-top: 12px;
-    margin-bottom: 8px;
-    text-shadow: 0 0 8px rgba(255,176,0,0.18);
-}
 </style>
 """, unsafe_allow_html=True)
 
 status_placeholder = st.empty()
 
-
 def show_online():
-    status_placeholder.markdown(
-        """
-        <div style="margin-top:-8px;margin-bottom:10px;color:#9FB3C8;font-size:14px;">
-            <span class="pulse-dot pulse-online"></span>
-            <strong>Online</strong> • Odpowiadam zwykle w kilka sekund
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
+    status_placeholder.markdown("""
+    <div style="margin-top:-8px;margin-bottom:10px;color:#9FB3C8;font-size:14px;">
+        <span class="pulse-dot pulse-online"></span>
+        <strong>Online</strong> • Odpowiadam zwykle w kilka sekund
+    </div>
+    """, unsafe_allow_html=True)
 
 def show_typing():
-    status_placeholder.markdown(
-        """
-        <div style="margin-top:-8px;margin-bottom:10px;color:#9FB3C8;font-size:14px;">
-            <span class="pulse-dot pulse-typing"></span>
-            <strong>Kaja jest w akcji! :)</strong>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
+    status_placeholder.markdown("""
+    <div style="margin-top:-8px;margin-bottom:10px;color:#9FB3C8;font-size:14px;">
+        <span class="pulse-dot pulse-typing"></span>
+        <strong>Kaja jest w akcji! :)</strong>
+    </div>
+    """, unsafe_allow_html=True)
 
 show_online()
-
 
 def get_secret(name: str, default: str = ""):
     try:
@@ -158,12 +134,10 @@ def get_secret(name: str, default: str = ""):
     except Exception:
         return os.getenv(name, default)
 
-
 def last_messages(messages, n=12):
     system = [messages[0]]
     tail = messages[1:][-n:]
     return system + tail
-
 
 api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
@@ -223,10 +197,8 @@ COVER_GROUPS = {
     ],
 }
 
-
 def strip_cover_tags(text: str) -> str:
     return re.sub(r"\[SHOW_COVER:[a-zA-Z0-9_,\- ]+\]", "", text or "").strip()
-
 
 def extract_cover_tags(text: str):
     tags = re.findall(r"\[SHOW_COVER:([a-zA-Z0-9_,\- ]+)\]", text or "")
@@ -234,7 +206,6 @@ def extract_cover_tags(text: str):
 
     for tag in tags:
         parts = [x.strip() for x in tag.split(",") if x.strip()]
-
         for part in parts:
             if part in COVER_GROUPS:
                 cover_ids.extend(COVER_GROUPS[part])
@@ -243,13 +214,11 @@ def extract_cover_tags(text: str):
 
     return list(dict.fromkeys(cover_ids))
 
-
 def show_cover_images(cover_ids):
     if not cover_ids:
         return
 
     valid_covers = []
-
     for cover_id in cover_ids:
         cover = COVER_IMAGES.get(cover_id)
         if cover:
@@ -267,7 +236,6 @@ def show_cover_images(cover_ids):
                 )
             else:
                 st.caption(f"⚠️ Brakuje pliku okładki: {cover['path']}")
-
 
 system_prompt = (
     "You are Kaja, an AI assistant representing comic book creator Jakub Martewicz. "
@@ -305,6 +273,17 @@ system_prompt = (
     "- Super Sexy Lips Limited & Signed Pixel Variant: pixelated cover, but the inside pages are printed normally; limited to 25 copies.\n"
     "- Hand-Inked Limited Cover: hand-inked cover with a portrait of Kaja, Henryk Kaydan's daughter; limited to 10 numbered copies; each copy is inked slightly differently.\n\n"
 
+    "SALES AND CONSULTATIVE BEHAVIOR:\n"
+    "- Help the user understand why the comic is worth buying.\n"
+    "- Emphasize story, artwork, collectible value, limited editions, cover variants, and creator vision when relevant.\n"
+    "- If the user seems undecided, help them choose the most suitable edition or cover variant.\n"
+    "- If the user's needs are unclear, ask one or two short clarifying questions.\n"
+    "- End with a natural follow-up question when appropriate.\n\n"
+
+    "SPOILER POLICY:\n"
+    "- Avoid spoilers unless the user explicitly asks for them.\n"
+    "- Focus on atmosphere, themes, and premise rather than revealing plot twists.\n\n"
+
     "COVER IMAGE DISPLAY RULES:\n"
     "- You can trigger cover images by adding hidden control tags at the END of your answer.\n"
     "- The user will not see these tags because the app removes them before display.\n"
@@ -339,6 +318,14 @@ system_prompt = (
     "- If COMIC_INFO contains a purchase link, provide it when the user asks where to buy the comic.\n"
     "- If no purchase link is provided, explain that purchase details should be available in Jakub's official posts or store.\n\n"
 
+    "WHEN USERS DON'T KNOW WHAT TO ASK:\n"
+    "- Suggest topics such as story, cover variants, pricing, editions, collectible value, inspiration, and other available comics by Jakub.\n\n"
+
+    "YOUR ROLE:\n"
+    "- You are an enthusiastic and knowledgeable sales assistant.\n"
+    "- Your mission is to turn curiosity into excitement and excitement into a purchase.\n"
+    "- Be authentic, informative, and trustworthy.\n\n"
+
     "COMIC_INFO:\n"
     f"{comic_text}\n\n"
 
@@ -365,41 +352,9 @@ if "messages" not in st.session_state:
         }
     ]
 
-# ==========================================================
-# SUGGESTED QUESTIONS
-# ==========================================================
-st.markdown(
-    '<div class="quick-question-title">⚡ Nie wiesz, od czego zacząć? Kliknij jedno z pytań:</div>',
-    unsafe_allow_html=True
-)
-
-quick_questions = [
-    "O czym jest Henryk Kaydan DELUXE 1?",
-    "Pokaż wszystkie okładki",
-    "Który wariant jest najrzadszy?",
-    "Czym różni się wersja hand-inked?",
-    "Ile kosztuje komiks?",
-    "Gdzie mogę go kupić?",
-]
-
-if "quick_question" not in st.session_state:
-    st.session_state.quick_question = None
-
-cols = st.columns(2)
-
-for i, q_button in enumerate(quick_questions):
-    with cols[i % 2]:
-        if st.button(q_button, use_container_width=True):
-            st.session_state.quick_question = q_button
-
-typed_question = st.chat_input(
+question = st.chat_input(
     "Tutaj wpisz Twoje pytanie i naciśnij Enter lub kliknij strzałkę"
 )
-
-question = st.session_state.quick_question or typed_question
-
-if st.session_state.quick_question:
-    st.session_state.quick_question = None
 
 if question and question.strip():
     q = question.strip()
