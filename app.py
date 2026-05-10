@@ -586,7 +586,7 @@ api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
 feedback_text = get_secret("FEEDBACK_TEXT", "")
 
-BUY LINK = get_secret(
+BUY_LINK = get_secret(
     "BUY_LINK",
     "https://allegrolokalnie.pl/uzytkownik/rufur3"
 )
