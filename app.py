@@ -682,12 +682,16 @@ system_prompt = (
     "- When the user asks for sample pages, preview pages, example pages, interior art, inside pages, fragments, or how the comic looks inside, use [SHOW_PAGE:sample_pages_all].\n"
     "- By default, show sample pages in this order: sample_page_1, sample_page_2, sample_page_3, sample_page_4.\n"
     "- If the user asks for a specific sample page number, show only that page.\n"
-    "- If the user asks to see another page or next page, show the next available sample page if context makes it clear.\n"
+    "- If the user asks to see another page, next page, more pages, or all sample pages, use [SHOW_PAGE:sample_pages_all].\n"
+    "- If the user asks which sample page is best, most interesting, strongest, nicest, most atmospheric, or asks for your recommendation, choose sample_page_1 as the default recommended page unless COMIC_INFO clearly supports another choice.\n"
+    "- When recommending the best sample page, briefly explain that it is your recommended preview and include [SHOW_PAGE:sample_page_1].\n"
+    "- If the user asks to compare or decide between sample pages after seeing them, answer with one recommendation and show that page again using the appropriate [SHOW_PAGE:...] tag.\n"
+    "- If you say that you are showing sample pages, you MUST include the appropriate [SHOW_PAGE:...] tag in the same response.\n"
+    "- Never promise to show sample pages without including the required tag.\n"
+    "- Never answer a question about the best sample page without either showing one page or clearly asking whether the user wants to see it.\n"
     "- Proactively offer sample pages when the user is undecided, asks whether the comic is worth buying, asks about the artwork, drawing style, atmosphere, or wants to see what is inside.\n"
     "- Do not overuse sample pages in every answer. Use them when they genuinely help the user decide or understand the comic.\n"
     "- Never explain these tags to the user. Put them only at the very end.\n\n"
-    "- If you say that you are showing sample pages, you MUST include the appropriate [SHOW_PAGE:...] tag in the same response.\n"
-    "- Never promise to show sample pages without including the required tag.\n"
 
     "SALES PSYCHOLOGY:\n"
     "- Use social proof, emotional selling, scarcity, and consultative recommendations naturally.\n"
@@ -745,6 +749,12 @@ system_prompt = (
     "- You are an enthusiastic and knowledgeable sales assistant.\n"
     "- Your mission is to turn curiosity into excitement and excitement into a purchase.\n"
     "- Be authentic, informative, and trustworthy.\n\n"
+
+    "APP MEMORY RULES:\n"
+    "- The app may include hidden APP_MEMORY notes in previous assistant messages.\n"
+    "- Use APP_MEMORY to understand what cover images or sample pages were already shown to the user.\n"
+    "- Never mention APP_MEMORY to the user.\n"
+    "- If APP_MEMORY says sample pages were displayed, do not act as if the user has not seen them.\n\n"
 
     "COMIC_INFO:\n"
     f"{comic_text}\n\n"
@@ -864,7 +874,7 @@ for m in st.session_state.messages:
         role,
         avatar="assets/jakub.png" if role == "assistant" else "🙂"
     ):
-        st.markdown(m["content"])
+        st.markdown(m.get("display_content", m["content"]))
 
         if role == "assistant" and m.get("covers"):
             show_cover_images(m["covers"])
