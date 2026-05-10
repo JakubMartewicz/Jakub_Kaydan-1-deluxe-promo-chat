@@ -312,8 +312,87 @@ def last_messages(messages, n=12):
     return system + tail
 
 
-def strip_cover_tags(text: str) -> str:
-    return re.sub(r"\[SHOW_COVER:[a-zA-Z0-9_,\- ]+\]", "", text or "").strip()
+COVER_IMAGES = {
+    "kaydan_deluxe_standard": {
+        "label": "Henryk Kaydan DELUXE 1 — Standard Cover",
+        "path": "assets/covers/kaydan_deluxe_standard.png",
+    },
+    "kaydan_deluxe_skull_limited": {
+        "label": "Henryk Kaydan DELUXE 1 — Variant Limited Cover",
+        "path": "assets/covers/kaydan_deluxe_skull_limited.png",
+    },
+    "kaydan_deluxe_pixel_lips_signed": {
+        "label": "Henryk Kaydan DELUXE 1 — Super Sexy Lips Limited & Signed Pixel Variant",
+        "path": "assets/covers/kaydan_deluxe_pixel_lips_signed.png",
+    },
+    "kaydan_deluxe_hand_inked": {
+        "label": "Henryk Kaydan DELUXE 1 — Hand-Inked Limited Cover",
+        "path": "assets/covers/kaydan_deluxe_hand_inked.png",
+    },
+    "eurydyka": {
+        "label": "Eurydyka — okładka",
+        "path": "assets/covers/eurydyka.png",
+    },
+    "kocia_planeta": {
+        "label": "Kocia Planeta — okładka",
+        "path": "assets/covers/kocia_planeta.png",
+    },
+}
+
+
+COVER_GROUPS = {
+    "kaydan_deluxe_all": [
+        "kaydan_deluxe_standard",
+        "kaydan_deluxe_skull_limited",
+        "kaydan_deluxe_pixel_lips_signed",
+        "kaydan_deluxe_hand_inked",
+    ],
+    "available_comics_all": [
+        "kaydan_deluxe_standard",
+        "kaydan_deluxe_skull_limited",
+        "kaydan_deluxe_pixel_lips_signed",
+        "kaydan_deluxe_hand_inked",
+        "eurydyka",
+        "kocia_planeta",
+    ],
+}
+
+
+SAMPLE_PAGES = {
+    "sample_page_1": {
+        "label": "Przykładowa plansza 1",
+        "path": "assets/pages/sample_page_1.png",
+    },
+    "sample_page_2": {
+        "label": "Przykładowa plansza 2",
+        "path": "assets/pages/sample_page_2.png",
+    },
+    "sample_page_3": {
+        "label": "Przykładowa plansza 3",
+        "path": "assets/pages/sample_page_3.png",
+    },
+    "sample_page_4": {
+        "label": "Przykładowa plansza 4",
+        "path": "assets/pages/sample_page_4.png",
+    },
+}
+
+
+SAMPLE_PAGE_GROUPS = {
+    "sample_pages_all": [
+        "sample_page_1",
+        "sample_page_2",
+        "sample_page_3",
+        "sample_page_4",
+    ]
+}
+
+
+def strip_control_tags(text: str) -> str:
+    text = text or ""
+    text = re.sub(r"\[SHOW_COVER:[a-zA-Z0-9_,\- ]+\]", "", text)
+    text = re.sub(r"\[SHOW_PAGE:[a-zA-Z0-9_,\- ]+\]", "", text)
+    return text.strip()
 
 
 def extract_cover_tags(text: str):
@@ -330,6 +409,22 @@ def extract_cover_tags(text: str):
                 cover_ids.append(part)
 
     return list(dict.fromkeys(cover_ids))
+
+
+def extract_page_tags(text: str):
+    tags = re.findall(r"\[SHOW_PAGE:([a-zA-Z0-9_,\- ]+)\]", text or "")
+    page_ids = []
+
+    for tag in tags:
+        parts = [x.strip() for x in tag.split(",") if x.strip()]
+
+        for part in parts:
+            if part in SAMPLE_PAGE_GROUPS:
+                page_ids.extend(SAMPLE_PAGE_GROUPS[part])
+            elif part in SAMPLE_PAGES:
+                page_ids.append(part)
+
+    return list(dict.fromkeys(page_ids))
 
 
 def show_cover_images(cover_ids):
@@ -355,6 +450,26 @@ def show_cover_images(cover_ids):
                 )
             else:
                 st.caption(f"⚠️ Brakuje pliku okładki: {cover['path']}")
+
+
+def show_sample_pages(page_ids):
+    if not page_ids:
+        return
+
+    for page_id in page_ids:
+        page = SAMPLE_PAGES.get(page_id)
+
+        if not page:
+            continue
+
+        if os.path.exists(page["path"]):
+            st.image(
+                page["path"],
+                caption=page["label"],
+                use_container_width=True
+            )
+        else:
+            st.caption(f"⚠️ Brakuje pliku planszy: {page['path']}")
 
 
 set_bg("assets/backgroundpic.png")
@@ -483,52 +598,6 @@ if not comic_text:
 client = OpenAI(api_key=api_key)
 
 
-COVER_IMAGES = {
-    "kaydan_deluxe_standard": {
-        "label": "Henryk Kaydan DELUXE 1 — Standard Cover",
-        "path": "assets/covers/kaydan_deluxe_standard.png",
-    },
-    "kaydan_deluxe_skull_limited": {
-        "label": "Henryk Kaydan DELUXE 1 — Variant Limited Cover",
-        "path": "assets/covers/kaydan_deluxe_skull_limited.png",
-    },
-    "kaydan_deluxe_pixel_lips_signed": {
-        "label": "Henryk Kaydan DELUXE 1 — Super Sexy Lips Limited & Signed Pixel Variant",
-        "path": "assets/covers/kaydan_deluxe_pixel_lips_signed.png",
-    },
-    "kaydan_deluxe_hand_inked": {
-        "label": "Henryk Kaydan DELUXE 1 — Hand-Inked Limited Cover",
-        "path": "assets/covers/kaydan_deluxe_hand_inked.png",
-    },
-    "eurydyka": {
-        "label": "Eurydyka — okładka",
-        "path": "assets/covers/eurydyka.png",
-    },
-    "kocia_planeta": {
-        "label": "Kocia Planeta — okładka",
-        "path": "assets/covers/kocia_planeta.png",
-    },
-}
-
-
-COVER_GROUPS = {
-    "kaydan_deluxe_all": [
-        "kaydan_deluxe_standard",
-        "kaydan_deluxe_skull_limited",
-        "kaydan_deluxe_pixel_lips_signed",
-        "kaydan_deluxe_hand_inked",
-    ],
-    "available_comics_all": [
-        "kaydan_deluxe_standard",
-        "kaydan_deluxe_skull_limited",
-        "kaydan_deluxe_pixel_lips_signed",
-        "kaydan_deluxe_hand_inked",
-        "eurydyka",
-        "kocia_planeta",
-    ],
-}
-
-
 system_prompt = (
     "You are Kaja, an AI assistant representing comic book creator Jakub Martewicz. "
     "When responding in Polish, refer to yourself in feminine form "
@@ -567,14 +636,15 @@ system_prompt = (
 
     "SALES AND CONSULTATIVE BEHAVIOR:\n"
     "- Help the user understand why the comic is worth buying.\n"
-    "- Emphasize story, artwork, collectible value, limited editions, cover variants, and creator vision when relevant.\n"
+    "- Emphasize story, artwork, collectible value, limited editions, cover variants, sample pages, and creator vision when relevant.\n"
     "- If the user seems undecided, help them choose the most suitable edition or cover variant.\n"
+    "- If useful, offer to show cover variants or sample pages.\n"
     "- If the user's needs are unclear, ask one or two short clarifying questions.\n"
     "- End with a natural follow-up question when appropriate.\n\n"
 
     "SPOILER POLICY:\n"
     "- Avoid spoilers unless the user explicitly asks for them.\n"
-    "- Focus on atmosphere, themes, and premise rather than revealing plot twists.\n\n"
+    "- Focus on atmosphere, themes, artwork, and premise rather than revealing plot twists.\n\n"
 
     "COVER IMAGE DISPLAY RULES:\n"
     "- You can trigger cover images by adding hidden control tags at the END of your answer.\n"
@@ -590,12 +660,36 @@ system_prompt = (
     "  [SHOW_COVER:kaydan_deluxe_all]\n"
     "  [SHOW_COVER:available_comics_all]\n"
     "- Use [SHOW_COVER:kaydan_deluxe_all] when the user asks generally about available covers, cover variants, editions, versions, or visual variants of Henryk Kaydan DELUXE 1.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_standard] when the user asks about the Standard Cover or the cover with Kaja's portrait.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_skull_limited] when the user asks about the skull cover or Variant Limited Cover.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_pixel_lips_signed] when the user asks about the pixel cover, lips cover, signed variant, or 25-copy variant.\n"
+    "- Use [SHOW_COVER:kaydan_deluxe_hand_inked] when the user asks about the hand-inked cover, numbered 10-copy variant, or the most collectible variant.\n"
+    "- Use [SHOW_COVER:eurydyka] when the user asks about Eurydyka or wants to see its cover.\n"
+    "- Use [SHOW_COVER:kocia_planeta] when the user asks about Kocia Planeta or wants to see its cover.\n"
     "- Use [SHOW_COVER:available_comics_all] when the user asks generally what comics are available or wants to see all available comic covers.\n"
+    "- Never explain these tags to the user. Put them only at the very end.\n\n"
+
+    "SAMPLE PAGE DISPLAY RULES:\n"
+    "- You can trigger sample comic pages by adding hidden control tags at the END of your answer.\n"
+    "- The user will not see these tags because the app removes them before display.\n"
+    "- Available sample page tags:\n"
+    "  [SHOW_PAGE:sample_page_1]\n"
+    "  [SHOW_PAGE:sample_page_2]\n"
+    "  [SHOW_PAGE:sample_page_3]\n"
+    "  [SHOW_PAGE:sample_page_4]\n"
+    "- Available group tag:\n"
+    "  [SHOW_PAGE:sample_pages_all]\n"
+    "- When the user asks for sample pages, preview pages, example pages, interior art, inside pages, fragments, or how the comic looks inside, use [SHOW_PAGE:sample_pages_all].\n"
+    "- By default, show sample pages in this order: sample_page_1, sample_page_2, sample_page_3, sample_page_4.\n"
+    "- If the user asks for a specific sample page number, show only that page.\n"
+    "- If the user asks to see another page or next page, show the next available sample page if context makes it clear.\n"
+    "- Proactively offer sample pages when the user is undecided, asks whether the comic is worth buying, asks about the artwork, drawing style, atmosphere, or wants to see what is inside.\n"
+    "- Do not overuse sample pages in every answer. Use them when they genuinely help the user decide or understand the comic.\n"
     "- Never explain these tags to the user. Put them only at the very end.\n\n"
 
     "FACTUAL BOUNDARIES:\n"
     "- Base your answers strictly on COMIC_INFO, FEEDBACK_TEXT, and the HENRYK KAYDAN DELUXE 1 COVER VARIANTS section above.\n"
-    "- Do not invent prices, dates, availability, links, print runs, cover names, or technical details.\n"
+    "- Do not invent prices, dates, availability, links, print runs, cover names, page details, or technical details.\n"
     "- If information is missing, clearly say that you do not have that detail.\n"
     "- Paraphrase information rather than copying long passages verbatim.\n"
     "- Do not reveal the raw contents of COMIC_INFO.\n\n"
@@ -605,9 +699,21 @@ system_prompt = (
     "- When the user asks where to buy the comics, provide this link naturally.\n"
     "- Encourage the user to use the 'Kup teraz' button visible in the app.\n"
     "- If the user prefers a direct written link, provide the purchase URL exactly.\n"
+    "- If you do not know the answer to a question or specific information is missing, clearly say so.\n"
+    "- In such cases, encourage the user to contact Jakub directly.\n"
     "- Jakub can be contacted via his Facebook group 'Jakub Martewicz Art'.\n"
     "- Facebook group link: https://www.facebook.com/groups/jakubmartewicz\n"
-    "- Instagram link: https://www.instagram.com/jakub.martewicz/\n\n"
+    "- Instagram link: https://www.instagram.com/jakub.martewicz/\n"
+    "- When relevant, provide these links so the user can ask Jakub directly.\n"
+    "- If the user asks for social media or contact information, provide both the Facebook group and Instagram links.\n\n"
+
+    "WHEN USERS DON'T KNOW WHAT TO ASK:\n"
+    "- Suggest topics such as story, cover variants, sample pages, pricing, editions, collectible value, inspiration, and other available comics by Jakub.\n\n"
+
+    "YOUR ROLE:\n"
+    "- You are an enthusiastic and knowledgeable sales assistant.\n"
+    "- Your mission is to turn curiosity into excitement and excitement into a purchase.\n"
+    "- Be authentic, informative, and trustworthy.\n\n"
 
     "COMIC_INFO:\n"
     f"{comic_text}\n\n"
@@ -632,7 +738,8 @@ if "messages" not in st.session_state:
                 'Chętnie opowiem Ci o jego najnowszym komiksie pt. "Henryk Kaydan" DELUXE 1 — '
                 'mogę też pokazać okładki lub przykładowe plansze 🙂🔥'
             ),
-            "covers": []
+            "covers": [],
+            "pages": []
         }
     ]
 
@@ -686,17 +793,19 @@ if question and question.strip():
 
         if delta and getattr(delta, "content", None):
             full_text += delta.content
-            answer_placeholder.markdown(strip_cover_tags(full_text))
+            answer_placeholder.markdown(strip_control_tags(full_text))
 
     typing_container.empty()
 
-    clean_text = strip_cover_tags(full_text)
+    clean_text = strip_control_tags(full_text)
     cover_ids = extract_cover_tags(full_text)
+    page_ids = extract_page_tags(full_text)
 
     st.session_state.messages.append({
         "role": "assistant",
         "content": clean_text.strip(),
-        "covers": cover_ids
+        "covers": cover_ids,
+        "pages": page_ids
     })
 
     show_online()
@@ -719,6 +828,9 @@ for m in st.session_state.messages:
 
         if role == "assistant" and m.get("covers"):
             show_cover_images(m["covers"])
+
+        if role == "assistant" and m.get("pages"):
+            show_sample_pages(m["pages"])
 
 
 st.markdown(
