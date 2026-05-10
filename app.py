@@ -269,6 +269,9 @@ if "intro_seen" not in st.session_state:
     )
     st.session_state.intro_seen = True
 
+# Tło aplikacji ustawiamy dopiero po wyświetleniu intro,
+# dzięki czemu nie przebija przez animację.
+set_bg("assets/backgroundpic.png")
 st.markdown("""
 <h1 style="
 background: linear-gradient(
