@@ -313,13 +313,13 @@ def show_intro_animation(face_path: str, skull_path: str):
             position: fixed;
             inset: 0;
             z-index: 2147483647;
-            background: #000 !important;
+            background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
+            pointer-events: none;
             animation: introFadeOut 0.35s ease forwards;
             animation-delay: 1.75s;
-            pointer-events: none;
         }}
 
         .kaja-intro-inner {{
@@ -328,12 +328,45 @@ def show_intro_animation(face_path: str, skull_path: str):
             height: min(84vh, 780px);
         }}
 
+        /* Miękkie wygaszenie krawędzi */
+        .kaja-intro-inner::after {{
+            content: "";
+            position: absolute;
+            inset: -8%;
+            background: radial-gradient(
+                circle at center,
+                rgba(0,0,0,0) 45%,
+                rgba(0,0,0,0.35) 65%,
+                rgba(0,0,0,0.75) 82%,
+                rgba(0,0,0,1) 100%
+            );
+            pointer-events: none;
+        }}
+
         .kaja-intro-img {{
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             object-fit: contain;
+
+            /* Maska wygaszająca brzegi PNG */
+            -webkit-mask-image: radial-gradient(
+                circle at center,
+                rgba(0,0,0,1) 0%,
+                rgba(0,0,0,1) 55%,
+                rgba(0,0,0,0.92) 68%,
+                rgba(0,0,0,0.55) 82%,
+                rgba(0,0,0,0) 100%
+            );
+            mask-image: radial-gradient(
+                circle at center,
+                rgba(0,0,0,1) 0%,
+                rgba(0,0,0,1) 55%,
+                rgba(0,0,0,0.92) 68%,
+                rgba(0,0,0,0.55) 82%,
+                rgba(0,0,0,0) 100%
+            );
         }}
 
         .kaja-face {{
@@ -349,28 +382,63 @@ def show_intro_animation(face_path: str, skull_path: str):
         }}
 
         @keyframes faceToSkull {{
-            0% {{ opacity: 1; transform: scale(1.02); filter: blur(0px) brightness(1); }}
-            42% {{ opacity: 0.85; transform: scale(1.04); filter: blur(0px) brightness(1); }}
-            68% {{ opacity: 0.25; transform: scale(1.07); filter: blur(1px) brightness(0.75); }}
-            100% {{ opacity: 0; transform: scale(1.1); filter: blur(3px) brightness(0.45); }}
+            0% {{
+                opacity: 1;
+                transform: scale(1.02);
+                filter: blur(0px) brightness(1);
+            }}
+            42% {{
+                opacity: 0.85;
+                transform: scale(1.04);
+                filter: blur(0px) brightness(1);
+            }}
+            68% {{
+                opacity: 0.25;
+                transform: scale(1.07);
+                filter: blur(1px) brightness(0.75);
+            }}
+            100% {{
+                opacity: 0;
+                transform: scale(1.10);
+                filter: blur(3px) brightness(0.45);
+            }}
         }}
 
         @keyframes skullAppear {{
-            0% {{ opacity: 0; transform: scale(1.1); filter: blur(4px) contrast(1.05); }}
-            35% {{ opacity: 0; }}
-            65% {{ opacity: 0.7; transform: scale(1.06); filter: blur(1px) contrast(1.12); }}
-            100% {{ opacity: 1; transform: scale(1.02); filter: blur(0px) contrast(1.1); }}
+            0% {{
+                opacity: 0;
+                transform: scale(1.10);
+                filter: blur(4px) contrast(1.05);
+            }}
+            35% {{
+                opacity: 0;
+            }}
+            65% {{
+                opacity: 0.7;
+                transform: scale(1.06);
+                filter: blur(1px) contrast(1.12);
+            }}
+            100% {{
+                opacity: 1;
+                transform: scale(1.02);
+                filter: blur(0px) contrast(1.10);
+            }}
         }}
 
         @keyframes introFadeOut {{
-            to {{ opacity: 0; visibility: hidden; }}
+            to {{
+                opacity: 0;
+                visibility: hidden;
+            }}
         }}
         </style>
 
         <div class="kaja-intro">
             <div class="kaja-intro-inner">
-                <img class="kaja-intro-img kaja-face" src="data:image/png;base64,{face_data}">
-                <img class="kaja-intro-img kaja-skull" src="data:image/png;base64,{skull_data}">
+                <img class="kaja-intro-img kaja-face"
+                     src="data:image/png;base64,{face_data}">
+                <img class="kaja-intro-img kaja-skull"
+                     src="data:image/png;base64,{skull_data}">
             </div>
         </div>
         """, unsafe_allow_html=True)
