@@ -66,27 +66,31 @@ st.markdown("""
 <h1 style="
 background: linear-gradient(
 90deg,
-#7F1D1D 0%,
-#B91C1C 18%,
-#DC2626 36%,
-#EA580C 54%,
-#F97316 72%,
-#FDBA74 100%
+#8B0000 0%,
+#C1121F 15%,
+#E63946 30%,
+#FF4500 50%,
+#FF7A00 70%,
+#FFB000 85%,
+#FFD84D 100%
 );
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
-text-shadow: 0 0 14px rgba(249,115,22,0.20);
+text-shadow: 0 0 18px rgba(255,140,0,0.28);
 font-weight: 700;
 letter-spacing: 0.4px;
 ">
 💬 Komiksy Jakuba Martewicza
 </h1>
 
-<h3 style="color:#FDE68A; font-weight:500;">
+<h3 style="
+color:#FFE082;
+font-weight:500;
+text-shadow: 0 0 8px rgba(255,176,0,0.15);
+">
 Kaja, Wirtualna Asystentka AI
 </h3>
 """, unsafe_allow_html=True)
-
 # ==========================================================
 # STATUS CSS
 # ==========================================================
