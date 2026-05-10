@@ -582,15 +582,35 @@ def show_typing():
 
 show_online()
 
-api_key = get_secret(...)
-comic_text = get_secret(...)
-buy_link = get_secret(...)
-facebook_group_link = get_secret(...)
-instagram_link = get_secret(...)
-youtube_link = get_secret(...)
+api_key = get_secret("OPENAI_API_KEY")
+comic_text = get_secret("COMIC_TEXT")
+feedback_text = get_secret("FEEDBACK_TEXT", "")
+
+buy_link = get_secret(
+    "BUY_LINK",
+    "https://allegrolokalnie.pl/uzytkownik/rufur3"
+)
+
+facebook_group_link = get_secret(
+    "FACEBOOK_GROUP_LINK",
+    "https://www.facebook.com/groups/jakubmartewicz"
+)
+
+instagram_link = get_secret(
+    "INSTAGRAM_LINK",
+    "https://www.instagram.com/jakub.martewicz/"
+)
+
+youtube_link = get_secret(
+    "YOUTUBE_LINK",
+    "https://www.youtube.com/@KomiksowaNawijka"
+)
 
 st.markdown(f"""
-<a href="{buy_link}" ...
+<a href="{buy_link}" target="_blank" rel="noopener noreferrer" class="buy-now-button">
+    <span>🛒</span>
+    <span>Kup teraz</span>
+</a>
 """, unsafe_allow_html=True)
 
 if not api_key:
