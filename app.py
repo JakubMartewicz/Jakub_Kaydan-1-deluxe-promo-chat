@@ -154,14 +154,12 @@ def show_intro_animation(face_path: str, skull_path: str):
             position: fixed;
             inset: 0;
             z-index: 999999;
-            background:
-                radial-gradient(circle at center, rgba(150, 0, 0, 0.26), rgba(0, 0, 0, 0.96) 62%),
-                #000;
+            background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: introFadeOut 0.65s ease forwards;
-            animation-delay: 2.65s;
+            animation: introFadeOut 0.45s ease forwards;
+            animation-delay: 1.85s;
             pointer-events: none;
         }}
 
@@ -169,7 +167,6 @@ def show_intro_animation(face_path: str, skull_path: str):
             position: relative;
             width: min(78vw, 560px);
             height: min(84vh, 780px);
-            filter: drop-shadow(0 0 30px rgba(220, 30, 20, 0.42));
         }}
 
         .kaja-intro-img {{
@@ -183,54 +180,21 @@ def show_intro_animation(face_path: str, skull_path: str):
         .kaja-face {{
             opacity: 1;
             transform: scale(1.02);
-            animation: faceToSkull 2.55s ease-in-out forwards;
+            animation: faceToSkull 1.75s ease-in-out forwards;
         }}
 
         .kaja-skull {{
             opacity: 0;
             transform: scale(1.08);
-            animation: skullAppear 2.55s ease-in-out forwards;
+            animation: skullAppear 1.75s ease-in-out forwards;
         }}
 
         .kaja-intro-title {{
-            position: fixed;
-            bottom: 12%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ffdfaa;
-            font-size: clamp(20px, 4vw, 40px);
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            text-align: center;
-            text-shadow:
-                0 0 12px rgba(255, 60, 30, 0.75),
-                0 0 34px rgba(160, 0, 0, 0.85);
-            animation: titlePulse 2.55s ease-in-out forwards;
-            white-space: nowrap;
+            display: none;
         }}
 
         .kaja-intro-line {{
-            position: fixed;
-            bottom: 9%;
-            left: 50%;
-            width: min(55vw, 420px);
-            height: 3px;
-            transform: translateX(-50%);
-            border-radius: 999px;
-            background: rgba(255,255,255,0.12);
-            overflow: hidden;
-        }}
-
-        .kaja-intro-line::after {{
-            content: "";
-            display: block;
-            height: 100%;
-            width: 0%;
-            border-radius: 999px;
-            background: linear-gradient(90deg, #5a0505, #c1121f, #ffb703);
-            box-shadow: 0 0 18px rgba(255, 80, 30, 0.9);
-            animation: loadingLine 2.45s ease-in-out forwards;
+            display: none;
         }}
 
         @keyframes faceToSkull {{
@@ -239,65 +203,42 @@ def show_intro_animation(face_path: str, skull_path: str):
                 transform: scale(1.02);
                 filter: blur(0px) brightness(1);
             }}
-            35% {{
-                opacity: 1;
+            42% {{
+                opacity: 0.85;
                 transform: scale(1.04);
-                filter: blur(0px) brightness(1.08);
+                filter: blur(0px) brightness(1);
             }}
-            58% {{
-                opacity: 0.45;
-                transform: scale(1.08);
-                filter: blur(1.5px) brightness(0.82);
+            68% {{
+                opacity: 0.25;
+                transform: scale(1.07);
+                filter: blur(1px) brightness(0.75);
             }}
             100% {{
                 opacity: 0;
-                transform: scale(1.13);
-                filter: blur(4px) brightness(0.5);
+                transform: scale(1.1);
+                filter: blur(3px) brightness(0.45);
             }}
         }}
 
         @keyframes skullAppear {{
             0% {{
                 opacity: 0;
-                transform: scale(1.13);
-                filter: blur(5px) contrast(1.1);
+                transform: scale(1.1);
+                filter: blur(4px) contrast(1.05);
             }}
-            32% {{
+            35% {{
                 opacity: 0;
             }}
-            57% {{
-                opacity: 0.68;
-                transform: scale(1.08);
-                filter: blur(1px) contrast(1.25);
+            65% {{
+                opacity: 0.7;
+                transform: scale(1.06);
+                filter: blur(1px) contrast(1.12);
             }}
             100% {{
                 opacity: 1;
                 transform: scale(1.02);
-                filter: blur(0px) contrast(1.18);
+                filter: blur(0px) contrast(1.1);
             }}
-        }}
-
-        @keyframes titlePulse {{
-            0% {{
-                opacity: 0;
-                transform: translateX(-50%) translateY(10px);
-            }}
-            35% {{
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }}
-            78% {{
-                opacity: 1;
-            }}
-            100% {{
-                opacity: 0;
-                transform: translateX(-50%) translateY(-8px);
-            }}
-        }}
-
-        @keyframes loadingLine {{
-            0% {{ width: 0%; }}
-            100% {{ width: 100%; }}
         }}
 
         @keyframes introFadeOut {{
@@ -313,14 +254,11 @@ def show_intro_animation(face_path: str, skull_path: str):
                 <img class="kaja-intro-img kaja-face" src="data:image/png;base64,{face_data}">
                 <img class="kaja-intro-img kaja-skull" src="data:image/png;base64,{skull_data}">
             </div>
-            <div class="kaja-intro-title">Kaja budzi się...</div>
-            <div class="kaja-intro-line"></div>
         </div>
         """, unsafe_allow_html=True)
 
     except FileNotFoundError:
         pass
-
 
 set_bg("assets/backgroundpic.png")
 
