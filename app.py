@@ -2,179 +2,27 @@ import os
 import re
 import time
 import base64
+
 import streamlit as st
 from openai import OpenAI
+
 
 st.set_page_config(
     page_title="Komiksy Jakuba Martewicza",
     page_icon="💬"
 )
 
-# Czarna zasłona startowa — ukrywa "mignięcie" pustego layoutu
-st.markdown("""
-<style>
-html, body, [data-testid="stAppViewContainer"], .stApp {
-    background: #000 !important;
-}
-
-.start-black-cover {
-    position: fixed;
-    inset: 0;
-    z-index: 2147483646;
-    background: #000;
-    pointer-events: none;
-    animation: startCoverFadeOut 0.25s ease forwards;
-    animation-delay: 1.90s;
-}
-
-@keyframes startCoverFadeOut {
-    to {
-        opacity: 0;
-        visibility: hidden;
-    }
-}
-</style>
-
-<div class="start-black-cover"></div>
-""", unsafe_allow_html=True)
-
 BUY_LINK = "https://allegrolokalnie.pl/uzytkownik/rufur3"
 
-def set_bg(image_path: str):
-    try:
-        with open(image_path, "rb") as f:
-            data = base64.b64encode(f.read()).decode("utf-8")
 
-        st.markdown(f"""
-        <style>
-        .stApp {{
-            background-image: url("data:image/png;base64,{data}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
-
-        .stApp::before {{
-            content: "";
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(
-                rgba(0, 0, 0, 0.35) 0%,
-                rgba(0, 0, 0, 0.50) 40%,
-                rgba(0, 0, 0, 0.65) 100%
-            );
-            z-index: 0;
-            pointer-events: none;
-        }}
-
-        .main,
-        header,
-        footer,
-        [data-testid="stSidebar"] {{
-            position: relative;
-            z-index: 1;
-        }}
-
-        .buy-now-button {{
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px 34px;
-            margin: 10px 0 22px 0;
-            border-radius: 999px;
-            overflow: hidden;
-            white-space: nowrap;
-            cursor: pointer;
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    rgba(255,255,255,0.14) 0%,
-                    rgba(255,255,255,0.02) 100%
-                ),
-                linear-gradient(
-                    135deg,
-                    #5a0505 0%,
-                    #8b0d0d 22%,
-                    #c1121f 55%,
-                    #e85d04 82%,
-                    #ffb703 100%
-                );
-
-            color: #ffffff !important;
-            font-weight: 800;
-            font-size: 18px;
-            text-decoration: none !important;
-            letter-spacing: 0.45px;
-
-            border: 1px solid rgba(255, 220, 160, 0.22);
-
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.16),
-                inset 0 -1px 0 rgba(0,0,0,0.25),
-                0 10px 24px rgba(80, 0, 0, 0.45),
-                0 4px 14px rgba(255, 122, 0, 0.22);
-
-            text-shadow:
-                0 1px 2px rgba(0,0,0,0.35),
-                0 0 8px rgba(255,255,255,0.08);
-
-            transition:
-                transform 0.22s ease,
-                box-shadow 0.22s ease,
-                filter 0.22s ease;
-
-            transform: translateY(0);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-        }}
-
-        .buy-now-button:visited,
-        .buy-now-button:link {{
-            color: #ffffff !important;
-            text-decoration: none !important;
-        }}
-
-        .buy-now-button:hover {{
-            transform: translateY(-3px) scale(1.02);
-            color: #ffffff !important;
-            filter: brightness(1.08);
-
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.18),
-                inset 0 -1px 0 rgba(0,0,0,0.25),
-                0 16px 34px rgba(80, 0, 0, 0.55),
-                0 8px 18px rgba(255, 122, 0, 0.30);
-        }}
-
-        .buy-now-button:active {{
-            transform: translateY(1px) scale(0.99);
-        }}
-
-        .buy-now-button:focus,
-        .buy-now-button:focus-visible {{
-            outline: none !important;
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.16),
-                inset 0 -1px 0 rgba(0,0,0,0.25),
-                0 10px 24px rgba(80, 0, 0, 0.45),
-                0 4px 14px rgba(255, 122, 0, 0.22);
-        }}
-        </style>
-        """, unsafe_allow_html=True)
-
-    except FileNotFoundError:
-        pass
+def image_to_base64(image_path: str) -> str:
+    with open(image_path, "rb") as f:
+        return base64.b64encode(f.read()).decode("utf-8")
 
 
 def set_bg(image_path: str):
     try:
-        with open(image_path, "rb") as f:
-            data = base64.b64encode(f.read()).decode("utf-8")
+        data = image_to_base64(image_path)
 
         st.markdown(f"""
         <style>
@@ -294,26 +142,18 @@ def set_bg(image_path: str):
         .buy-now-button:focus,
         .buy-now-button:focus-visible {{
             outline: none !important;
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.16),
-                inset 0 -1px 0 rgba(0,0,0,0.25),
-                0 10px 24px rgba(80, 0, 0, 0.45),
-                0 4px 14px rgba(255, 122, 0, 0.22);
         }}
         </style>
         """, unsafe_allow_html=True)
 
     except FileNotFoundError:
-        pass
+        st.warning(f"Brakuje pliku tła: {image_path}")
 
 
 def show_intro_animation(face_path: str, skull_path: str):
     try:
-        with open(face_path, "rb") as f:
-            face_data = base64.b64encode(f.read()).decode("utf-8")
-
-        with open(skull_path, "rb") as f:
-            skull_data = base64.b64encode(f.read()).decode("utf-8")
+        face_data = image_to_base64(face_path)
+        skull_data = image_to_base64(skull_path)
 
         st.markdown(f"""
         <style>
@@ -326,10 +166,8 @@ def show_intro_animation(face_path: str, skull_path: str):
             align-items: center;
             justify-content: center;
             pointer-events: none;
-
-            /* Overlay znika szybciej */
             animation: introFadeOut 0.35s ease forwards;
-            animation-delay: 1.15s;
+            animation-delay: 1.65s;
         }}
 
         .kaja-intro-inner {{
@@ -338,7 +176,6 @@ def show_intro_animation(face_path: str, skull_path: str):
             height: min(84vh, 780px);
         }}
 
-        /* Miękkie wygaszenie krawędzi obrazka */
         .kaja-intro-inner::after {{
             content: "";
             position: absolute;
@@ -369,6 +206,7 @@ def show_intro_animation(face_path: str, skull_path: str):
                 rgba(0,0,0,0.65) 82%,
                 rgba(0,0,0,0) 100%
             );
+
             mask-image: radial-gradient(
                 circle at center,
                 rgba(0,0,0,1) 0%,
@@ -433,29 +271,90 @@ def show_intro_animation(face_path: str, skull_path: str):
         }}
 
         @keyframes introFadeOut {{
-            to {{
+            0% {{
+                opacity: 1;
+                visibility: visible;
+            }}
+            99% {{
+                opacity: 0;
+                visibility: visible;
+            }}
+            100% {{
                 opacity: 0;
                 visibility: hidden;
+                z-index: -1;
             }}
         }}
         </style>
 
         <div class="kaja-intro">
             <div class="kaja-intro-inner">
-                <img
-                    class="kaja-intro-img kaja-face"
-                    src="data:image/png;base64,{face_data}"
-                >
-                <img
-                    class="kaja-intro-img kaja-skull"
-                    src="data:image/png;base64,{skull_data}"
-                >
+                <img class="kaja-intro-img kaja-face" src="data:image/png;base64,{face_data}">
+                <img class="kaja-intro-img kaja-skull" src="data:image/png;base64,{skull_data}">
             </div>
         </div>
         """, unsafe_allow_html=True)
 
     except FileNotFoundError:
         pass
+
+
+def get_secret(name: str, default: str = ""):
+    try:
+        return st.secrets.get(name, os.getenv(name, default))
+    except Exception:
+        return os.getenv(name, default)
+
+
+def last_messages(messages, n=12):
+    system = [messages[0]]
+    tail = messages[1:][-n:]
+    return system + tail
+
+
+def strip_cover_tags(text: str) -> str:
+    return re.sub(r"\[SHOW_COVER:[a-zA-Z0-9_,\- ]+\]", "", text or "").strip()
+
+
+def extract_cover_tags(text: str):
+    tags = re.findall(r"\[SHOW_COVER:([a-zA-Z0-9_,\- ]+)\]", text or "")
+    cover_ids = []
+
+    for tag in tags:
+        parts = [x.strip() for x in tag.split(",") if x.strip()]
+
+        for part in parts:
+            if part in COVER_GROUPS:
+                cover_ids.extend(COVER_GROUPS[part])
+            elif part in COVER_IMAGES:
+                cover_ids.append(part)
+
+    return list(dict.fromkeys(cover_ids))
+
+
+def show_cover_images(cover_ids):
+    if not cover_ids:
+        return
+
+    valid_covers = []
+
+    for cover_id in cover_ids:
+        cover = COVER_IMAGES.get(cover_id)
+        if cover:
+            valid_covers.append(cover)
+
+    cols = st.columns(2)
+
+    for index, cover in enumerate(valid_covers):
+        with cols[index % 2]:
+            if os.path.exists(cover["path"]):
+                st.image(
+                    cover["path"],
+                    caption=cover["label"],
+                    use_container_width=True
+                )
+            else:
+                st.caption(f"⚠️ Brakuje pliku okładki: {cover['path']}")
 
 
 set_bg("assets/backgroundpic.png")
@@ -466,8 +365,6 @@ if "intro_seen" not in st.session_state:
         "assets/intro/kaja_skull.png"
     )
     st.session_state.intro_seen = True
-
-set_bg("assets/backgroundpic.png")
 
 
 st.markdown("""
@@ -500,12 +397,14 @@ Kaja, Wirtualna Asystentka AI
 </h3>
 """, unsafe_allow_html=True)
 
+
 st.markdown(f"""
 <a href="{BUY_LINK}" target="_blank" rel="noopener noreferrer" class="buy-now-button">
     <span>🛒</span>
     <span>Kup teraz</span>
 </a>
 """, unsafe_allow_html=True)
+
 
 st.markdown("""
 <style>
@@ -523,6 +422,7 @@ st.markdown("""
   box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.7);
   animation: pulse-online 1.4s infinite;
 }
+
 @keyframes pulse-online {
   0%   { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.7); }
   70%  { box-shadow: 0 0 0 10px rgba(110, 231, 183, 0.0); }
@@ -534,6 +434,7 @@ st.markdown("""
   box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7);
   animation: pulse-typing 1.2s infinite;
 }
+
 @keyframes pulse-typing {
   0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7); }
   70%  { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0.0); }
@@ -542,7 +443,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
 status_placeholder = st.empty()
+
 
 def show_online():
     status_placeholder.markdown("""
@@ -552,6 +455,7 @@ def show_online():
     </div>
     """, unsafe_allow_html=True)
 
+
 def show_typing():
     status_placeholder.markdown("""
     <div style="margin-top:-8px;margin-bottom:10px;color:#9FB3C8;font-size:14px;">
@@ -560,18 +464,9 @@ def show_typing():
     </div>
     """, unsafe_allow_html=True)
 
+
 show_online()
 
-def get_secret(name: str, default: str = ""):
-    try:
-        return st.secrets.get(name, os.getenv(name, default))
-    except Exception:
-        return os.getenv(name, default)
-
-def last_messages(messages, n=12):
-    system = [messages[0]]
-    tail = messages[1:][-n:]
-    return system + tail
 
 api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
@@ -586,6 +481,7 @@ if not comic_text:
     st.stop()
 
 client = OpenAI(api_key=api_key)
+
 
 COVER_IMAGES = {
     "kaydan_deluxe_standard": {
@@ -614,6 +510,7 @@ COVER_IMAGES = {
     },
 }
 
+
 COVER_GROUPS = {
     "kaydan_deluxe_all": [
         "kaydan_deluxe_standard",
@@ -631,45 +528,6 @@ COVER_GROUPS = {
     ],
 }
 
-def strip_cover_tags(text: str) -> str:
-    return re.sub(r"\[SHOW_COVER:[a-zA-Z0-9_,\- ]+\]", "", text or "").strip()
-
-def extract_cover_tags(text: str):
-    tags = re.findall(r"\[SHOW_COVER:([a-zA-Z0-9_,\- ]+)\]", text or "")
-    cover_ids = []
-
-    for tag in tags:
-        parts = [x.strip() for x in tag.split(",") if x.strip()]
-        for part in parts:
-            if part in COVER_GROUPS:
-                cover_ids.extend(COVER_GROUPS[part])
-            elif part in COVER_IMAGES:
-                cover_ids.append(part)
-
-    return list(dict.fromkeys(cover_ids))
-
-def show_cover_images(cover_ids):
-    if not cover_ids:
-        return
-
-    valid_covers = []
-    for cover_id in cover_ids:
-        cover = COVER_IMAGES.get(cover_id)
-        if cover:
-            valid_covers.append(cover)
-
-    cols = st.columns(2)
-
-    for index, cover in enumerate(valid_covers):
-        with cols[index % 2]:
-            if os.path.exists(cover["path"]):
-                st.image(
-                    cover["path"],
-                    caption=cover["label"],
-                    use_container_width=True
-                )
-            else:
-                st.caption(f"⚠️ Brakuje pliku okładki: {cover['path']}")
 
 system_prompt = (
     "You are Kaja, an AI assistant representing comic book creator Jakub Martewicz. "
@@ -732,12 +590,6 @@ system_prompt = (
     "  [SHOW_COVER:kaydan_deluxe_all]\n"
     "  [SHOW_COVER:available_comics_all]\n"
     "- Use [SHOW_COVER:kaydan_deluxe_all] when the user asks generally about available covers, cover variants, editions, versions, or visual variants of Henryk Kaydan DELUXE 1.\n"
-    "- Use [SHOW_COVER:kaydan_deluxe_standard] when the user asks about the Standard Cover or the cover with Kaja's portrait.\n"
-    "- Use [SHOW_COVER:kaydan_deluxe_skull_limited] when the user asks about the skull cover or Variant Limited Cover.\n"
-    "- Use [SHOW_COVER:kaydan_deluxe_pixel_lips_signed] when the user asks about the pixel cover, lips cover, signed variant, or 25-copy variant.\n"
-    "- Use [SHOW_COVER:kaydan_deluxe_hand_inked] when the user asks about the hand-inked cover, numbered 10-copy variant, or the most collectible variant.\n"
-    "- Use [SHOW_COVER:eurydyka] when the user asks about Eurydyka or wants to see its cover.\n"
-    "- Use [SHOW_COVER:kocia_planeta] when the user asks about Kocia Planeta or wants to see its cover.\n"
     "- Use [SHOW_COVER:available_comics_all] when the user asks generally what comics are available or wants to see all available comic covers.\n"
     "- Never explain these tags to the user. Put them only at the very end.\n\n"
 
@@ -753,31 +605,22 @@ system_prompt = (
     "- When the user asks where to buy the comics, provide this link naturally.\n"
     "- Encourage the user to use the 'Kup teraz' button visible in the app.\n"
     "- If the user prefers a direct written link, provide the purchase URL exactly.\n"
-    "- If you do not know the answer to a question or specific information is missing, clearly say so.\n"
-    "- In such cases, encourage the user to contact Jakub directly.\n"
     "- Jakub can be contacted via his Facebook group 'Jakub Martewicz Art'.\n"
     "- Facebook group link: https://www.facebook.com/groups/jakubmartewicz\n"
-    "- Instagram link: https://www.instagram.com/jakub.martewicz/\n"
-    "- When relevant, provide these links so the user can ask Jakub directly.\n"
-    "- If the user asks for social media or contact information, provide both the Facebook group and Instagram links.\n\n"
-
-    "WHEN USERS DON'T KNOW WHAT TO ASK:\n"
-    "- Suggest topics such as story, cover variants, pricing, editions, collectible value, inspiration, and other available comics by Jakub.\n\n"
-
-    "YOUR ROLE:\n"
-    "- You are an enthusiastic and knowledgeable sales assistant.\n"
-    "- Your mission is to turn curiosity into excitement and excitement into a purchase.\n"
-    "- Be authentic, informative, and trustworthy.\n\n"
+    "- Instagram link: https://www.instagram.com/jakub.martewicz/\n\n"
 
     "COMIC_INFO:\n"
     f"{comic_text}\n\n"
 
-    "FEEDBACK_TEXT (paraphrase only, do not quote verbatim):\n"
+    "FEEDBACK_TEXT — paraphrase only, do not quote verbatim:\n"
     f"{feedback_text}"
 )
 
+
 if st.button("Resetuj rozmowę"):
     st.session_state.pop("messages", None)
+    st.rerun()
+
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
@@ -795,9 +638,11 @@ if "messages" not in st.session_state:
         }
     ]
 
+
 question = st.chat_input(
     "Tutaj wpisz Twoje pytanie i naciśnij Enter lub kliknij strzałkę"
 )
+
 
 if question and question.strip():
     q = question.strip()
@@ -858,7 +703,9 @@ if question and question.strip():
 
     show_online()
 
+
 st.divider()
+
 
 for m in st.session_state.messages:
     role = m.get("role", "")
@@ -874,6 +721,7 @@ for m in st.session_state.messages:
 
         if role == "assistant" and m.get("covers"):
             show_cover_images(m["covers"])
+
 
 st.markdown(
     """
