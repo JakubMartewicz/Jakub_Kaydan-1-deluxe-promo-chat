@@ -7,6 +7,18 @@ from openai import OpenAI
 
 st.set_page_config(page_title="Komiksy Jakuba Martewicza", page_icon="💬")
 
+st.markdown("""
+<style>
+html, body, .stApp {
+    background: #000 !important;
+}
+
+[data-testid="stAppViewContainer"] {
+    background: #000 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 BUY_LINK = "https://allegrolokalnie.pl/uzytkownik/rufur3"
 
 def set_bg(image_path: str):
