@@ -319,9 +319,9 @@ def show_intro_animation(face_path: str, skull_path: str):
             justify-content: center;
             pointer-events: none;
 
-            /* Cały overlay delikatnie znika do czerni */
-            animation: introFadeOut 0.75s ease forwards;
-            animation-delay: 1.45s;
+            /* Overlay znika szybciej */
+            animation: introFadeOut 0.45s ease forwards;
+            animation-delay: 1.20s;
         }}
 
         .kaja-intro-inner {{
@@ -353,7 +353,6 @@ def show_intro_animation(face_path: str, skull_path: str):
             height: 100%;
             object-fit: contain;
 
-            /* Wygaszanie brzegów PNG */
             -webkit-mask-image: radial-gradient(
                 circle at center,
                 rgba(0,0,0,1) 0%,
@@ -375,13 +374,13 @@ def show_intro_animation(face_path: str, skull_path: str):
         .kaja-face {{
             opacity: 1;
             transform: scale(1.02);
-            animation: faceToSkull 1.45s ease-in-out forwards;
+            animation: faceToSkull 1.10s ease-in-out forwards;
         }}
 
         .kaja-skull {{
             opacity: 0;
             transform: scale(1.08);
-            animation: skullAppearAndFade 1.90s ease-in-out forwards;
+            animation: skullAppearAndFade 1.25s ease-in-out forwards;
         }}
 
         @keyframes faceToSkull {{
@@ -408,12 +407,12 @@ def show_intro_animation(face_path: str, skull_path: str):
                 transform: scale(1.08);
                 filter: blur(4px) brightness(0.7);
             }}
-            35% {{
-                opacity: 0.75;
+            30% {{
+                opacity: 0.8;
                 transform: scale(1.05);
                 filter: blur(1px) brightness(0.85);
             }}
-            65% {{
+            55% {{
                 opacity: 1;
                 transform: scale(1.02);
                 filter: blur(0px) brightness(0.9);
@@ -421,7 +420,7 @@ def show_intro_animation(face_path: str, skull_path: str):
             100% {{
                 opacity: 0;
                 transform: scale(1.00);
-                filter: blur(5px) brightness(0.03);
+                filter: blur(4px) brightness(0.02);
             }}
         }}
 
