@@ -246,7 +246,7 @@ system_prompt = (
 
     "PURCHASE AND CONTACT RULES:\n"
     "- If COMIC_INFO contains a purchase link, provide it when the user asks where to buy the comic.\n"
-    "- If no purchase link is provided, explain that purchase details should be available in Jakub's official posts or store.\n"
+    "- If no purchase link is provided, explain that purchase details should be available in 's official posts or store.\n"
     "- Do not provide private contact details unless explicitly included in COMIC_INFO.\n\n"
 
     "WHEN USERS DON'T KNOW WHAT TO ASK:\n"
@@ -284,7 +284,7 @@ if "messages" not in st.session_state:
         {
             "role": "assistant",
             "content": (
-                "Cześć! 👋 Jestem Kaja, wirtualna asystentka Jakuba. "
+                "Cześć! 👋 Jestem Kaja, wirtualna asystentka a. "
                 "Chętnie opowiem Ci o jego nowym komiksie — fabule, okładkach, "
                 "wariantach, cenie i wszystkim, co warto wiedzieć przed zakupem."
             )
@@ -314,7 +314,7 @@ if question and question.strip():
     typing_container = st.empty()
 
     with typing_container.container():
-        with st.chat_message("assistant", avatar="jakub.png"):
+        with st.chat_message("assistant", avatar="assets/jakub.png"):
             typing_placeholder = st.empty()
             answer_placeholder = st.empty()
 
@@ -369,7 +369,7 @@ for m in st.session_state.messages:
 
     with st.chat_message(
         role,
-        avatar="jakub.png" if role == "assistant" else "🙂"
+        avatar="assets/jakub.png" if role == "assistant" else "🙂"
     ):
         st.markdown(m["content"])
 
