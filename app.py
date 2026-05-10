@@ -45,10 +45,11 @@ def set_bg(image_path: str):
             z-index: 1;
         }}
 
-        /* ===== ELEGANCKI PRZYCISK KUP TERAZ ===== */
+        /* ===== PREMIUM DARK RED BUTTON ===== */
         .buy-now-button {{
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             padding: 15px 34px;
             margin: 10px 0 22px 0;
@@ -56,29 +57,35 @@ def set_bg(image_path: str):
 
             background:
                 linear-gradient(
-                    135deg,
-                    rgba(255,255,255,0.22),
-                    rgba(255,255,255,0.03)
+                    180deg,
+                    rgba(255,255,255,0.14) 0%,
+                    rgba(255,255,255,0.02) 100%
                 ),
                 linear-gradient(
                     135deg,
-                    #FFD36A 0%,
-                    #FF7A00 42%,
-                    #D91E5B 100%
+                    #4a0404 0%,
+                    #7a0b0b 28%,
+                    #b11226 65%,
+                    #e63946 100%
                 );
 
-            color: #fff8e7 !important;
+            color: #ffffff !important;
             font-weight: 800;
             font-size: 18px;
             text-decoration: none !important;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.45px;
 
-            border: 1px solid rgba(255, 230, 160, 0.65);
+            border: 1px solid rgba(255, 210, 210, 0.18);
 
             box-shadow:
-                0 0 0 1px rgba(255,255,255,0.08) inset,
-                0 10px 24px rgba(217, 30, 91, 0.35),
-                0 4px 14px rgba(255, 122, 0, 0.28);
+                inset 0 1px 0 rgba(255,255,255,0.14),
+                inset 0 -1px 0 rgba(0,0,0,0.25),
+                0 10px 24px rgba(80, 0, 0, 0.45),
+                0 4px 12px rgba(230, 57, 70, 0.22);
+
+            text-shadow:
+                0 1px 2px rgba(0,0,0,0.35),
+                0 0 8px rgba(255,255,255,0.08);
 
             transition: all 0.22s ease;
             transform: translateY(0);
@@ -87,14 +94,15 @@ def set_bg(image_path: str):
         }}
 
         .buy-now-button:hover {{
-            transform: translateY(-3px);
+            transform: translateY(-3px) scale(1.02);
             color: #ffffff !important;
-            filter: brightness(1.06);
+            filter: brightness(1.08);
 
             box-shadow:
-                0 0 0 1px rgba(255,255,255,0.14) inset,
-                0 14px 30px rgba(217, 30, 91, 0.48),
-                0 6px 18px rgba(255, 122, 0, 0.35);
+                inset 0 1px 0 rgba(255,255,255,0.18),
+                inset 0 -1px 0 rgba(0,0,0,0.25),
+                0 16px 34px rgba(80, 0, 0, 0.55),
+                0 6px 16px rgba(230, 57, 70, 0.28);
         }}
 
         .buy-now-button:active {{
@@ -105,6 +113,8 @@ def set_bg(image_path: str):
 
     except FileNotFoundError:
         pass
+
+
 set_bg("assets/backgroundpic.png")
 
 st.markdown("""
