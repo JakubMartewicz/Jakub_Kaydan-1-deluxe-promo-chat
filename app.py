@@ -45,7 +45,6 @@ def set_bg(image_path: str):
             z-index: 1;
         }}
 
-        /* ===== PREMIUM WARM RED BUTTON ===== */
         .buy-now-button {{
             display: inline-flex;
             align-items: center;
@@ -54,7 +53,7 @@ def set_bg(image_path: str):
             padding: 15px 34px;
             margin: 10px 0 22px 0;
             border-radius: 999px;
-            overflow: hidden;              /* utrzymuje zaokrąglenie */
+            overflow: hidden;
             white-space: nowrap;
             cursor: pointer;
             outline: none !important;
@@ -103,7 +102,6 @@ def set_bg(image_path: str):
             -webkit-backdrop-filter: blur(6px);
         }}
 
-        /* odwiedzone linki mają wyglądać identycznie */
         .buy-now-button:visited,
         .buy-now-button:link {{
             color: #ffffff !important;
@@ -126,7 +124,6 @@ def set_bg(image_path: str):
             transform: translateY(1px) scale(0.99);
         }}
 
-        /* usuwa domyślny focus outline z przeglądarki */
         .buy-now-button:focus,
         .buy-now-button:focus-visible {{
             outline: none !important;
@@ -143,8 +140,196 @@ def set_bg(image_path: str):
         pass
 
 
+def show_intro_animation(face_path: str, skull_path: str):
+    try:
+        with open(face_path, "rb") as f:
+            face_data = base64.b64encode(f.read()).decode("utf-8")
+
+        with open(skull_path, "rb") as f:
+            skull_data = base64.b64encode(f.read()).decode("utf-8")
+
+        st.markdown(f"""
+        <style>
+        .kaja-intro {{
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background:
+                radial-gradient(circle at center, rgba(150, 0, 0, 0.26), rgba(0, 0, 0, 0.96) 62%),
+                #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: introFadeOut 0.65s ease forwards;
+            animation-delay: 2.65s;
+            pointer-events: none;
+        }}
+
+        .kaja-intro-inner {{
+            position: relative;
+            width: min(78vw, 560px);
+            height: min(84vh, 780px);
+            filter: drop-shadow(0 0 30px rgba(220, 30, 20, 0.42));
+        }}
+
+        .kaja-intro-img {{
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }}
+
+        .kaja-face {{
+            opacity: 1;
+            transform: scale(1.02);
+            animation: faceToSkull 2.55s ease-in-out forwards;
+        }}
+
+        .kaja-skull {{
+            opacity: 0;
+            transform: scale(1.08);
+            animation: skullAppear 2.55s ease-in-out forwards;
+        }}
+
+        .kaja-intro-title {{
+            position: fixed;
+            bottom: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffdfaa;
+            font-size: clamp(20px, 4vw, 40px);
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-align: center;
+            text-shadow:
+                0 0 12px rgba(255, 60, 30, 0.75),
+                0 0 34px rgba(160, 0, 0, 0.85);
+            animation: titlePulse 2.55s ease-in-out forwards;
+            white-space: nowrap;
+        }}
+
+        .kaja-intro-line {{
+            position: fixed;
+            bottom: 9%;
+            left: 50%;
+            width: min(55vw, 420px);
+            height: 3px;
+            transform: translateX(-50%);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.12);
+            overflow: hidden;
+        }}
+
+        .kaja-intro-line::after {{
+            content: "";
+            display: block;
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #5a0505, #c1121f, #ffb703);
+            box-shadow: 0 0 18px rgba(255, 80, 30, 0.9);
+            animation: loadingLine 2.45s ease-in-out forwards;
+        }}
+
+        @keyframes faceToSkull {{
+            0% {{
+                opacity: 1;
+                transform: scale(1.02);
+                filter: blur(0px) brightness(1);
+            }}
+            35% {{
+                opacity: 1;
+                transform: scale(1.04);
+                filter: blur(0px) brightness(1.08);
+            }}
+            58% {{
+                opacity: 0.45;
+                transform: scale(1.08);
+                filter: blur(1.5px) brightness(0.82);
+            }}
+            100% {{
+                opacity: 0;
+                transform: scale(1.13);
+                filter: blur(4px) brightness(0.5);
+            }}
+        }}
+
+        @keyframes skullAppear {{
+            0% {{
+                opacity: 0;
+                transform: scale(1.13);
+                filter: blur(5px) contrast(1.1);
+            }}
+            32% {{
+                opacity: 0;
+            }}
+            57% {{
+                opacity: 0.68;
+                transform: scale(1.08);
+                filter: blur(1px) contrast(1.25);
+            }}
+            100% {{
+                opacity: 1;
+                transform: scale(1.02);
+                filter: blur(0px) contrast(1.18);
+            }}
+        }}
+
+        @keyframes titlePulse {{
+            0% {{
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }}
+            35% {{
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }}
+            78% {{
+                opacity: 1;
+            }}
+            100% {{
+                opacity: 0;
+                transform: translateX(-50%) translateY(-8px);
+            }}
+        }}
+
+        @keyframes loadingLine {{
+            0% {{ width: 0%; }}
+            100% {{ width: 100%; }}
+        }}
+
+        @keyframes introFadeOut {{
+            to {{
+                opacity: 0;
+                visibility: hidden;
+            }}
+        }}
+        </style>
+
+        <div class="kaja-intro">
+            <div class="kaja-intro-inner">
+                <img class="kaja-intro-img kaja-face" src="data:image/png;base64,{face_data}">
+                <img class="kaja-intro-img kaja-skull" src="data:image/png;base64,{skull_data}">
+            </div>
+            <div class="kaja-intro-title">Kaja budzi się...</div>
+            <div class="kaja-intro-line"></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    except FileNotFoundError:
+        pass
+
 
 set_bg("assets/backgroundpic.png")
+
+if "intro_seen" not in st.session_state:
+    show_intro_animation(
+        "assets/intro/kaja_face.png",
+        "assets/intro/kaja_skull.png"
+    )
+    st.session_state.intro_seen = True
 
 st.markdown("""
 <h1 style="
@@ -428,7 +613,7 @@ system_prompt = (
     f"- The official purchase link is: {BUY_LINK}\n"
     "- When the user asks where to buy the comics, provide this link naturally.\n"
     "- Encourage the user to use the 'Kup teraz' button visible in the app.\n"
-    "- If the user prefers a direct written link, provide the purchase URL exactly as stored in COMIC_INFO or secrets.\n"
+    "- If the user prefers a direct written link, provide the purchase URL exactly.\n"
     "- If you do not know the answer to a question or specific information is missing, clearly say so.\n"
     "- In such cases, encourage the user to contact Jakub directly.\n"
     "- Jakub can be contacted via his Facebook group 'Jakub Martewicz Art'.\n"
@@ -444,12 +629,6 @@ system_prompt = (
     "- You are an enthusiastic and knowledgeable sales assistant.\n"
     "- Your mission is to turn curiosity into excitement and excitement into a purchase.\n"
     "- Be authentic, informative, and trustworthy.\n\n"
-
-    "COMIC_INFO:\n"
-    f"{comic_text}\n\n"
-
-    "FEEDBACK_TEXT (paraphrase only, do not quote verbatim):\n"
-    f"{feedback_text}"
 
     "COMIC_INFO:\n"
     f"{comic_text}\n\n"
