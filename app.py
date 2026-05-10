@@ -318,8 +318,10 @@ def show_intro_animation(face_path: str, skull_path: str):
             align-items: center;
             justify-content: center;
             pointer-events: none;
-            animation: introFadeOut 0.35s ease forwards;
-            animation-delay: 1.75s;
+
+            /* Cały overlay delikatnie znika do czerni */
+            animation: introFadeOut 0.75s ease forwards;
+            animation-delay: 1.45s;
         }}
 
         .kaja-intro-inner {{
@@ -328,19 +330,20 @@ def show_intro_animation(face_path: str, skull_path: str):
             height: min(84vh, 780px);
         }}
 
-        /* Miękkie wygaszenie krawędzi */
+        /* Miękkie wygaszenie krawędzi obrazka */
         .kaja-intro-inner::after {{
             content: "";
             position: absolute;
-            inset: -8%;
+            inset: -10%;
+            pointer-events: none;
             background: radial-gradient(
                 circle at center,
-                rgba(0,0,0,0) 45%,
-                rgba(0,0,0,0.35) 65%,
-                rgba(0,0,0,0.75) 82%,
+                rgba(0,0,0,0) 42%,
+                rgba(0,0,0,0.18) 58%,
+                rgba(0,0,0,0.55) 74%,
+                rgba(0,0,0,0.88) 88%,
                 rgba(0,0,0,1) 100%
             );
-            pointer-events: none;
         }}
 
         .kaja-intro-img {{
@@ -350,21 +353,21 @@ def show_intro_animation(face_path: str, skull_path: str):
             height: 100%;
             object-fit: contain;
 
-            /* Maska wygaszająca brzegi PNG */
+            /* Wygaszanie brzegów PNG */
             -webkit-mask-image: radial-gradient(
                 circle at center,
                 rgba(0,0,0,1) 0%,
-                rgba(0,0,0,1) 55%,
-                rgba(0,0,0,0.92) 68%,
-                rgba(0,0,0,0.55) 82%,
+                rgba(0,0,0,1) 56%,
+                rgba(0,0,0,0.95) 68%,
+                rgba(0,0,0,0.65) 82%,
                 rgba(0,0,0,0) 100%
             );
             mask-image: radial-gradient(
                 circle at center,
                 rgba(0,0,0,1) 0%,
-                rgba(0,0,0,1) 55%,
-                rgba(0,0,0,0.92) 68%,
-                rgba(0,0,0,0.55) 82%,
+                rgba(0,0,0,1) 56%,
+                rgba(0,0,0,0.95) 68%,
+                rgba(0,0,0,0.65) 82%,
                 rgba(0,0,0,0) 100%
             );
         }}
@@ -372,13 +375,13 @@ def show_intro_animation(face_path: str, skull_path: str):
         .kaja-face {{
             opacity: 1;
             transform: scale(1.02);
-            animation: faceToSkull 1.65s ease-in-out forwards;
+            animation: faceToSkull 1.45s ease-in-out forwards;
         }}
 
         .kaja-skull {{
             opacity: 0;
             transform: scale(1.08);
-            animation: skullAppear 1.65s ease-in-out forwards;
+            animation: skullAppearAndFade 1.90s ease-in-out forwards;
         }}
 
         @keyframes faceToSkull {{
@@ -387,41 +390,38 @@ def show_intro_animation(face_path: str, skull_path: str):
                 transform: scale(1.02);
                 filter: blur(0px) brightness(1);
             }}
-            42% {{
-                opacity: 0.85;
+            45% {{
+                opacity: 0.65;
                 transform: scale(1.04);
-                filter: blur(0px) brightness(1);
-            }}
-            68% {{
-                opacity: 0.25;
-                transform: scale(1.07);
-                filter: blur(1px) brightness(0.75);
+                filter: blur(1px) brightness(0.8);
             }}
             100% {{
                 opacity: 0;
-                transform: scale(1.10);
-                filter: blur(3px) brightness(0.45);
+                transform: scale(1.08);
+                filter: blur(4px) brightness(0.25);
             }}
         }}
 
-        @keyframes skullAppear {{
+        @keyframes skullAppearAndFade {{
             0% {{
                 opacity: 0;
-                transform: scale(1.10);
-                filter: blur(4px) contrast(1.05);
+                transform: scale(1.08);
+                filter: blur(4px) brightness(0.7);
             }}
             35% {{
-                opacity: 0;
+                opacity: 0.75;
+                transform: scale(1.05);
+                filter: blur(1px) brightness(0.85);
             }}
             65% {{
-                opacity: 0.7;
-                transform: scale(1.06);
-                filter: blur(1px) contrast(1.12);
-            }}
-            100% {{
                 opacity: 1;
                 transform: scale(1.02);
-                filter: blur(0px) contrast(1.10);
+                filter: blur(0px) brightness(0.9);
+            }}
+            100% {{
+                opacity: 0;
+                transform: scale(1.00);
+                filter: blur(5px) brightness(0.03);
             }}
         }}
 
@@ -435,10 +435,14 @@ def show_intro_animation(face_path: str, skull_path: str):
 
         <div class="kaja-intro">
             <div class="kaja-intro-inner">
-                <img class="kaja-intro-img kaja-face"
-                     src="data:image/png;base64,{face_data}">
-                <img class="kaja-intro-img kaja-skull"
-                     src="data:image/png;base64,{skull_data}">
+                <img
+                    class="kaja-intro-img kaja-face"
+                    src="data:image/png;base64,{face_data}"
+                >
+                <img
+                    class="kaja-intro-img kaja-skull"
+                    src="data:image/png;base64,{skull_data}"
+                >
             </div>
         </div>
         """, unsafe_allow_html=True)
