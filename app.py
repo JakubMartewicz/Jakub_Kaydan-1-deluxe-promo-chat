@@ -585,6 +585,12 @@ show_online()
 api_key = get_secret("OPENAI_API_KEY")
 comic_text = get_secret("COMIC_TEXT")
 feedback_text = get_secret("FEEDBACK_TEXT", "")
+
+buy_link = get_secret(
+    "BUY_LINK",
+    "https://allegrolokalnie.pl/uzytkownik/rufur3"
+)
+
 youtube_link = get_secret(
     "YOUTUBE_LINK",
     "https://www.youtube.com/@KomiksowaNawijka"
