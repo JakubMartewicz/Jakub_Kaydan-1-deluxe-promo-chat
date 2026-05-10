@@ -260,7 +260,6 @@ def show_intro_animation(face_path: str, skull_path: str):
     except FileNotFoundError:
         pass
 
-set_bg("assets/backgroundpic.png")
 
 if "intro_seen" not in st.session_state:
     show_intro_animation(
@@ -269,9 +268,9 @@ if "intro_seen" not in st.session_state:
     )
     st.session_state.intro_seen = True
 
-# Tło aplikacji ustawiamy dopiero po wyświetleniu intro,
-# dzięki czemu nie przebija przez animację.
 set_bg("assets/backgroundpic.png")
+
+
 st.markdown("""
 <h1 style="
 background: linear-gradient(
