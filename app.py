@@ -278,9 +278,10 @@ if "messages" not in st.session_state:
         {
             "role": "assistant",
             "content": (
-                "Cześć! 👋 Jestem Kaja, wirtualna asystentka Jakuba Martewicza, autora komiksów z serii "Henryk Kaydan". "
-                "Chętnie opowiem Ci o jego nowym komiksie — fabule, okładkach, "
-                "wariantach, cenie i wszystkim, co warto wiedzieć przed zakupem."
+                'Cześć! 👋 Jestem Kaja, wirtualna asystentka Jakuba Martewicza, '
+                'autora komiksów z serii "Henryk Kaydan". '
+                'Chętnie opowiem Ci o jego najnowszym komiksie — fabule, okładkach, '
+                'wariantach, cenie i wszystkim, co warto wiedzieć przed zakupem.'
             )
         }
     ]
