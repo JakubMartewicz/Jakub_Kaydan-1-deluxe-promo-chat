@@ -319,9 +319,9 @@ def show_intro_animation(face_path: str, skull_path: str):
             justify-content: center;
             pointer-events: none;
 
-            /* Poprzednie tempo animacji, ale krótsze wygaszanie overlay */
-            animation: introFadeOut 0.40s ease forwards;
-            animation-delay: 1.30s;
+            /* Overlay znika szybciej */
+            animation: introFadeOut 0.35s ease forwards;
+            animation-delay: 1.15s;
         }}
 
         .kaja-intro-inner {{
