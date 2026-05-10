@@ -319,9 +319,9 @@ def show_intro_animation(face_path: str, skull_path: str):
             justify-content: center;
             pointer-events: none;
 
-            /* Overlay znika szybciej */
-            animation: introFadeOut 0.45s ease forwards;
-            animation-delay: 1.20s;
+            /* Poprzednie tempo animacji, ale krótsze wygaszanie overlay */
+            animation: introFadeOut 0.40s ease forwards;
+            animation-delay: 1.30s;
         }}
 
         .kaja-intro-inner {{
@@ -374,13 +374,13 @@ def show_intro_animation(face_path: str, skull_path: str):
         .kaja-face {{
             opacity: 1;
             transform: scale(1.02);
-            animation: faceToSkull 1.10s ease-in-out forwards;
+            animation: faceToSkull 1.45s ease-in-out forwards;
         }}
 
         .kaja-skull {{
             opacity: 0;
             transform: scale(1.08);
-            animation: skullAppearAndFade 1.25s ease-in-out forwards;
+            animation: skullAppearAndFade 1.90s ease-in-out forwards;
         }}
 
         @keyframes faceToSkull {{
@@ -407,12 +407,12 @@ def show_intro_animation(face_path: str, skull_path: str):
                 transform: scale(1.08);
                 filter: blur(4px) brightness(0.7);
             }}
-            30% {{
-                opacity: 0.8;
+            35% {{
+                opacity: 0.75;
                 transform: scale(1.05);
                 filter: blur(1px) brightness(0.85);
             }}
-            55% {{
+            65% {{
                 opacity: 1;
                 transform: scale(1.02);
                 filter: blur(0px) brightness(0.9);
@@ -420,7 +420,7 @@ def show_intro_animation(face_path: str, skull_path: str):
             100% {{
                 opacity: 0;
                 transform: scale(1.00);
-                filter: blur(4px) brightness(0.02);
+                filter: blur(5px) brightness(0.03);
             }}
         }}
 
