@@ -13,25 +13,7 @@ st.set_page_config(
     page_icon="💬"
 )
 
-# ─────────────────────────────────────────────
-# ANIMACJA — ukryj body natychmiast, odsłoń po zakończeniu intro
-# MUSI być pierwsze po set_page_config
-# ─────────────────────────────────────────────
-ANIM_TOTAL_MS = 2100
-
-st.markdown(f"""
-<style>
-body {{ visibility: hidden; }}
-body.kaja-ready {{ visibility: visible; }}
-</style>
-<script>
-(function() {{
-    setTimeout(function() {{
-        document.body.classList.add('kaja-ready');
-    }}, {ANIM_TOTAL_MS});
-}})();
-</script>
-""", unsafe_allow_html=True)
+# animacja: body hidden usunięte — Streamlit Cloud blokuje <script> w st.markdown
 
 
 BUY_LINK = "https://allegrolokalnie.pl/uzytkownik/rufur3"
@@ -479,7 +461,7 @@ def show_cover_images(cover_ids):
     for index, cover in enumerate(valid_covers):
         with cols[index % 2]:
             if os.path.exists(cover["path"]):
-                st.image(cover["path"], caption=cover["label"], use_container_width=True)
+                st.image(cover["path"], caption=cover["label"], width="stretch")
             else:
                 st.caption(f"⚠️ Brakuje pliku okładki: {cover['path']}")
 
@@ -492,7 +474,7 @@ def show_sample_pages(page_ids):
         if not page:
             continue
         if os.path.exists(page["path"]):
-            st.image(page["path"], caption=page["label"], use_container_width=True)
+            st.image(page["path"], caption=page["label"], width="stretch")
         else:
             st.caption(f"⚠️ Brakuje pliku planszy: {page['path']}")
 
