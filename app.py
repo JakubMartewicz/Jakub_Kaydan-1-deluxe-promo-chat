@@ -53,16 +53,7 @@ KAJA_DEFLECTIONS = [
     "Hej, jestem tu żeby rozmawiać o komiksach, nie o sobie 😄 Opowiem Ci o Henryku Kaydanie — chcesz zobaczyć okładki? 🔥",
 ]
 
-CHAT_PLACEHOLDERS = [
-    "Jakie są warianty okładek?",
-    "Pokaż mi plansze z komiksu",
-    "Czym różni się edycja limitowana?",
-    "O czym jest Henryk Kaydan?",
-    "Ile kopii zostało?",
-    "Czy komiks jest rysowany ręcznie?",
-    "Jaka jest cena komiksu?",
-    "Pokaż wszystkie dostępne komiksy",
-]
+CHAT_PLACEHOLDER = "Tutaj wpisz Twoje pytanie i naciśnij Enter lub kliknij strzałkę"
 
 
 # ─────────────────────────────────────────────
@@ -111,12 +102,7 @@ def seconds_since_last_message() -> float:
     return time.time() - last
 
 
-def get_placeholder() -> str:
-    if count_user_messages() == 0:
-        return "Tutaj wpisz Twoje pytanie i naciśnij Enter lub kliknij strzałkę"
-    if "placeholder_idx" not in st.session_state:
-        st.session_state.placeholder_idx = random.randint(0, len(CHAT_PLACEHOLDERS) - 1)
-    return CHAT_PLACEHOLDERS[st.session_state.placeholder_idx]
+
 
 
 # ─────────────────────────────────────────────
@@ -625,7 +611,6 @@ else:
             st.session_state.pop("messages", None)
             st.session_state.confirm_reset = False
             st.session_state.pop("last_message_time", None)
-            st.session_state.pop("placeholder_idx", None)
             st.rerun()
     with c2:
         if st.button("❌ Anuluj"):
@@ -898,7 +883,7 @@ st.markdown(
 # CHAT INPUT + SECURITY CHECKS
 # ─────────────────────────────────────────────
 
-question = st.chat_input(get_placeholder())
+question = st.chat_input(CHAT_PLACEHOLDER)
 
 if question and question.strip():
     q = question.strip()
@@ -1037,4 +1022,3 @@ components.html(
     """,
     height=0
 )
-
