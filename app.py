@@ -143,30 +143,31 @@ def set_bg(image_path: str):
         .buy-now-button {{
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            padding: 13px 28px;
+            gap: 14px;
+            padding: 14px 30px;
             margin: 10px 0 22px 0;
-            background: #FFB703;
-            color: #1a0a00 !important;
-            font-size: 15px;
+            background: #F05000;
+            color: #fff !important;
+            font-size: 17px;
             font-weight: 500;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
             border-radius: 4px;
-            border: 1px solid #e8a200;
+            border: 2px solid #ff8c3a;
             text-decoration: none !important;
             cursor: pointer;
-            transition: background 0.18s;
+            transition: background 0.18s, border-color 0.18s;
         }}
 
         .buy-now-button:visited,
         .buy-now-button:link {{
-            color: #1a0a00 !important;
+            color: #fff !important;
             text-decoration: none !important;
         }}
 
         .buy-now-button:hover {{
-            background: #e8a200;
-            color: #1a0a00 !important;
+            background: #d94800;
+            color: #fff !important;
+            border-color: #ff7a20;
         }}
 
         .buy-now-button:active {{
@@ -1000,3 +1001,4 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
