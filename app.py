@@ -713,6 +713,7 @@ system_prompt = (
     "- Available group tag:\n"
     "  [SHOW_PAGE:sample_pages_all]\n"
     "- When the user asks for sample pages, preview pages, example pages, interior art, inside pages, fragments, or how the comic looks inside, use [SHOW_PAGE:sample_pages_all].\n"
+    "- When the user asks for a selection — e.g. ulubione, najlepsze dwie, kilka plansz, pokaż mi coś, daj przykład — do NOT show all four. Pick 2 pages you find most atmospheric and show only those using individual tags, e.g. [SHOW_PAGE:sample_page_1] and [SHOW_PAGE:sample_page_3]. Briefly explain in one sentence why you chose them.\n"
     "- By default, show sample pages in this order: sample_page_1, sample_page_2, sample_page_3, sample_page_4.\n"
     "- If the user asks for a specific sample page number, show only that page.\n"
     "- If the user asks to see another page, next page, more pages, or all sample pages, use [SHOW_PAGE:sample_pages_all].\n"
@@ -1022,3 +1023,4 @@ components.html(
     """,
     height=0
 )
+
