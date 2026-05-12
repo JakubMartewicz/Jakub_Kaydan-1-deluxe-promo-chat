@@ -993,20 +993,28 @@ for m in st.session_state.messages:
 
 # ─────────────────────────────────────────────
 # SCROLL DO OSTATNIEJ WIADOMOŚCI
+# st.components.v1.html ma własny iframe — jedyne co działa pewnie na Streamlit Cloud
 # ─────────────────────────────────────────────
 
-st.markdown(
+import streamlit.components.v1 as components
+components.html(
     """
     <script>
     (function() {
-        function scrollToBottom() {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        function scrollParent() {
+            try {
+                window.parent.scrollTo({
+                    top: window.parent.document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            } catch(e) {}
         }
-        scrollToBottom();
-        setTimeout(scrollToBottom, 300);
-        setTimeout(scrollToBottom, 800);
+        scrollParent();
+        setTimeout(scrollParent, 300);
+        setTimeout(scrollParent, 700);
+        setTimeout(scrollParent, 1200);
     })();
     </script>
     """,
-    unsafe_allow_html=True
+    height=0
 )
