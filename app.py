@@ -143,85 +143,34 @@ def set_bg(image_path: str):
         .buy-now-button {{
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px 34px;
+            gap: 12px;
+            padding: 13px 28px;
             margin: 10px 0 22px 0;
-            border-radius: 999px;
-            overflow: hidden;
-            white-space: nowrap;
-            cursor: pointer;
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    rgba(255,255,255,0.14) 0%,
-                    rgba(255,255,255,0.02) 100%
-                ),
-                linear-gradient(
-                    135deg,
-                    #5a0505 0%,
-                    #8b0d0d 22%,
-                    #c1121f 55%,
-                    #e85d04 82%,
-                    #ffb703 100%
-                );
-
-            color: #ffffff !important;
-            font-weight: 800;
-            font-size: 18px;
+            background: #FFB703;
+            color: #1a0a00 !important;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            border-radius: 4px;
+            border: 1px solid #e8a200;
             text-decoration: none !important;
-            letter-spacing: 0.45px;
-
-            border: 1px solid rgba(255, 220, 160, 0.22);
-
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.16),
-                inset 0 -1px 0 rgba(0,0,0,0.25),
-                0 10px 24px rgba(80, 0, 0, 0.45),
-                0 4px 14px rgba(255, 122, 0, 0.22);
-
-            text-shadow:
-                0 1px 2px rgba(0,0,0,0.35),
-                0 0 8px rgba(255,255,255,0.08);
-
-            transition:
-                transform 0.22s ease,
-                box-shadow 0.22s ease,
-                filter 0.22s ease;
-
-            transform: translateY(0);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            cursor: pointer;
+            transition: background 0.18s;
         }}
 
         .buy-now-button:visited,
         .buy-now-button:link {{
-            color: #ffffff !important;
+            color: #1a0a00 !important;
             text-decoration: none !important;
         }}
 
         .buy-now-button:hover {{
-            transform: translateY(-3px) scale(1.02);
-            color: #ffffff !important;
-            filter: brightness(1.08);
-
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.18),
-                inset 0 -1px 0 rgba(0,0,0,0.25),
-                0 16px 34px rgba(80, 0, 0, 0.55),
-                0 8px 18px rgba(255, 122, 0, 0.30);
+            background: #e8a200;
+            color: #1a0a00 !important;
         }}
 
         .buy-now-button:active {{
-            transform: translateY(1px) scale(0.99);
-        }}
-
-        .buy-now-button:focus,
-        .buy-now-button:focus-visible {{
-            outline: none !important;
+            transform: scale(0.98);
         }}
         </style>
         """, unsafe_allow_html=True)
