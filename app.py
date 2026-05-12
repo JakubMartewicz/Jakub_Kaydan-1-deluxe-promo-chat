@@ -5,6 +5,7 @@ import base64
 import random
 
 import streamlit as st
+import streamlit.components.v1 as components
 from openai import OpenAI
 
 
@@ -111,6 +112,8 @@ def seconds_since_last_message() -> float:
 
 
 def get_placeholder() -> str:
+    if count_user_messages() == 0:
+        return "Tutaj wpisz Twoje pytanie i naciśnij Enter lub kliknij strzałkę"
     if "placeholder_idx" not in st.session_state:
         st.session_state.placeholder_idx = random.randint(0, len(CHAT_PLACEHOLDERS) - 1)
     return CHAT_PLACEHOLDERS[st.session_state.placeholder_idx]
@@ -1013,7 +1016,6 @@ for m in st.session_state.messages:
 # st.components.v1.html ma własny iframe — jedyne co działa pewnie na Streamlit Cloud
 # ─────────────────────────────────────────────
 
-import streamlit.components.v1 as components
 components.html(
     """
     <script>
