@@ -611,8 +611,9 @@ if not st.session_state.confirm_reset:
     st.markdown("""
     <div style="height:6px;"></div>
     """, unsafe_allow_html=True)
-    if st.button("↺  Resetuj rozmowę", key="reset_btn"):
+    if st.button("↺ Resetuj rozmowę", key="reset_btn"):
         st.session_state.confirm_reset = True
+        st.rerun()
 else:
     st.warning("Na pewno? Ta operacja wyczyści całą rozmowę.")
     c1, c2 = st.columns([1, 1])
@@ -869,7 +870,7 @@ if "messages" not in st.session_state:
 
 user_msg_count = count_user_messages()
 st.markdown(
-    f'<div style="font-size:12px;color:#555;margin-bottom:4px;">'
+    f'<div style="font-size:12px;color:#aaa;margin-bottom:4px;">'
     f'💬 {user_msg_count} / {MAX_USER_MESSAGES} wiadomości</div>',
     unsafe_allow_html=True
 )
@@ -1018,3 +1019,4 @@ components.html(
     """,
     height=0
 )
+
