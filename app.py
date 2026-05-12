@@ -937,23 +937,45 @@ if question and question.strip():
 
     messages_for_api = last_messages(st.session_state.messages, n=12)
 
-    stream = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages_for_api,
-        stream=True,
-        max_tokens=600,
-    )
+    try:
+        stream = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages_for_api,
+            stream=True,
+            max_tokens=600,
+        )
 
-    for event in stream:
-        now = time.time()
-        if now - last_tick > 0.15:
-            typing_placeholder.markdown(f"_Kaja pisze{dots[i % len(dots)]}_")
-            i += 1
-            last_tick = now
-        delta = event.choices[0].delta
-        if delta and getattr(delta, "content", None):
-            full_text += delta.content
-            answer_placeholder.markdown(strip_control_tags(full_text))
+        for event in stream:
+            now = time.time()
+            if now - last_tick > 0.15:
+                typing_placeholder.markdown(f"_Kaja pisze{dots[i % len(dots)]}_")
+                i += 1
+                last_tick = now
+            delta = event.choices[0].delta
+            if delta and getattr(delta, "content", None):
+                full_text += delta.content
+                answer_placeholder.markdown(strip_control_tags(full_text))
+
+    except Exception as e:
+        typing_container.empty()
+        err = str(e).lower()
+        if "rate limit" in err or "429" in err:
+            msg = "Oj, za dużo pytań naraz! Chwilka przerwy i spróbuj ponownie 😊"
+        elif "timeout" in err or "connection" in err:
+            msg = "Mam chwilową przerwę w połączeniu. Odśwież stronę i spróbuj jeszcze raz 🙂"
+        elif "insufficient_quota" in err or "billing" in err:
+                msg = "Kaja potrzebuje chwili technicznej przerwy. Wróć za moment! 🙂"
+        else:
+            msg = "Coś poszło nie tak po mojej stronie. Spróbuj ponownie za chwilę 🙂"
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": msg,
+            "display_content": msg,
+            "covers": [],
+            "pages": []
+        })
+        show_online()
+        st.rerun()
 
     typing_container.empty()
 
