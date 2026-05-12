@@ -991,7 +991,7 @@ for m in st.session_state.messages:
         role,
         avatar="assets/jakub.png" if role == "assistant" else "🙂"
     ):
-        st.markdown(m.get("display_content", m["content"]))
+        st.markdown(m.get("display_content", re.sub(r"\[APP_MEMORY:[^\]]*\]", "", m["content"]).strip()))
         if role == "assistant" and m.get("covers"):
             show_cover_images(m["covers"])
         if role == "assistant" and m.get("pages"):
@@ -1023,4 +1023,3 @@ components.html(
     """,
     height=0
 )
-
