@@ -2,6 +2,7 @@ import os
 import re
 import time
 import base64
+import random
 
 import streamlit as st
 from openai import OpenAI
@@ -11,6 +12,27 @@ st.set_page_config(
     page_title="Komiksy Jakuba Martewicza",
     page_icon="💬"
 )
+
+# ─────────────────────────────────────────────
+# ANIMACJA — ukryj body natychmiast, odsłoń po zakończeniu intro
+# MUSI być pierwsze po set_page_config
+# ─────────────────────────────────────────────
+ANIM_TOTAL_MS = 2100
+
+st.markdown(f"""
+<style>
+body {{ visibility: hidden; }}
+body.kaja-ready {{ visibility: visible; }}
+</style>
+<script>
+(function() {{
+    setTimeout(function() {{
+        document.body.classList.add('kaja-ready');
+    }}, {ANIM_TOTAL_MS});
+}})();
+</script>
+""", unsafe_allow_html=True)
+
 
 BUY_LINK = "https://allegrolokalnie.pl/uzytkownik/rufur3"
 buy_link = BUY_LINK
@@ -48,6 +70,17 @@ KAJA_DEFLECTIONS = [
     "Hej, jestem tu żeby rozmawiać o komiksach, nie o sobie 😄 Opowiem Ci o Henryku Kaydanie — chcesz zobaczyć okładki? 🔥",
 ]
 
+CHAT_PLACEHOLDERS = [
+    "Jakie są warianty okładek?",
+    "Pokaż mi plansze z komiksu",
+    "Czym różni się edycja limitowana?",
+    "O czym jest Henryk Kaydan?",
+    "Ile kopii zostało?",
+    "Czy komiks jest rysowany ręcznie?",
+    "Jaka jest cena komiksu?",
+    "Pokaż wszystkie dostępne komiksy",
+]
+
 
 # ─────────────────────────────────────────────
 # HELPERS
@@ -80,7 +113,6 @@ def is_suspicious(text: str) -> bool:
 
 
 def get_deflection() -> str:
-    import random
     return random.choice(KAJA_DEFLECTIONS)
 
 
@@ -94,6 +126,12 @@ def count_user_messages() -> int:
 def seconds_since_last_message() -> float:
     last = st.session_state.get("last_message_time", 0)
     return time.time() - last
+
+
+def get_placeholder() -> str:
+    if "placeholder_idx" not in st.session_state:
+        st.session_state.placeholder_idx = random.randint(0, len(CHAT_PLACEHOLDERS) - 1)
+    return CHAT_PLACEHOLDERS[st.session_state.placeholder_idx]
 
 
 # ─────────────────────────────────────────────
@@ -145,7 +183,7 @@ def set_bg(image_path: str):
             align-items: center;
             gap: 14px;
             padding: 14px 30px;
-            margin: 10px 0 22px 0;
+            margin: 10px 0 6px 0;
             background: #F05000;
             color: #fff !important;
             font-size: 17px;
@@ -156,6 +194,8 @@ def set_bg(image_path: str):
             text-decoration: none !important;
             cursor: pointer;
             transition: background 0.18s, border-color 0.18s;
+            width: 220px;
+            justify-content: center;
         }}
 
         .buy-now-button:visited,
@@ -172,6 +212,30 @@ def set_bg(image_path: str):
 
         .buy-now-button:active {{
             transform: scale(0.98);
+        }}
+
+        .reset-button {{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 16px;
+            margin: 0 0 16px 0;
+            width: 220px;
+            background: transparent;
+            color: #888 !important;
+            font-size: 13px;
+            font-weight: 400;
+            border-radius: 4px;
+            border: 1px solid #444;
+            cursor: pointer;
+            text-decoration: none !important;
+            transition: border-color 0.18s, color 0.18s;
+        }}
+
+        .reset-button:hover {{
+            border-color: #666;
+            color: #bbb !important;
         }}
         </style>
         """, unsafe_allow_html=True)
@@ -227,7 +291,6 @@ def show_intro_animation(face_path: str, skull_path: str):
             width: 100%;
             height: 100%;
             object-fit: contain;
-
             -webkit-mask-image: radial-gradient(
                 circle at center,
                 rgba(0,0,0,1) 0%,
@@ -236,7 +299,6 @@ def show_intro_animation(face_path: str, skull_path: str):
                 rgba(0,0,0,0.65) 82%,
                 rgba(0,0,0,0) 100%
             );
-
             mask-image: radial-gradient(
                 circle at center,
                 rgba(0,0,0,1) 0%,
@@ -260,60 +322,22 @@ def show_intro_animation(face_path: str, skull_path: str):
         }}
 
         @keyframes faceToSkull {{
-            0% {{
-                opacity: 1;
-                transform: scale(1.02);
-                filter: blur(0px) brightness(1);
-            }}
-            45% {{
-                opacity: 0.65;
-                transform: scale(1.04);
-                filter: blur(1px) brightness(0.8);
-            }}
-            100% {{
-                opacity: 0;
-                transform: scale(1.08);
-                filter: blur(4px) brightness(0.25);
-            }}
+            0% {{ opacity: 1; transform: scale(1.02); filter: blur(0px) brightness(1); }}
+            45% {{ opacity: 0.65; transform: scale(1.04); filter: blur(1px) brightness(0.8); }}
+            100% {{ opacity: 0; transform: scale(1.08); filter: blur(4px) brightness(0.25); }}
         }}
 
         @keyframes skullAppearAndFade {{
-            0% {{
-                opacity: 0;
-                transform: scale(1.08);
-                filter: blur(4px) brightness(0.7);
-            }}
-            35% {{
-                opacity: 0.75;
-                transform: scale(1.05);
-                filter: blur(1px) brightness(0.85);
-            }}
-            65% {{
-                opacity: 1;
-                transform: scale(1.02);
-                filter: blur(0px) brightness(0.9);
-            }}
-            100% {{
-                opacity: 0;
-                transform: scale(1.00);
-                filter: blur(5px) brightness(0.03);
-            }}
+            0% {{ opacity: 0; transform: scale(1.08); filter: blur(4px) brightness(0.7); }}
+            35% {{ opacity: 0.75; transform: scale(1.05); filter: blur(1px) brightness(0.85); }}
+            65% {{ opacity: 1; transform: scale(1.02); filter: blur(0px) brightness(0.9); }}
+            100% {{ opacity: 0; transform: scale(1.00); filter: blur(5px) brightness(0.03); }}
         }}
 
         @keyframes introFadeOut {{
-            0% {{
-                opacity: 1;
-                visibility: visible;
-            }}
-            99% {{
-                opacity: 0;
-                visibility: visible;
-            }}
-            100% {{
-                opacity: 0;
-                visibility: hidden;
-                z-index: -1;
-            }}
+            0% {{ opacity: 1; visibility: visible; }}
+            99% {{ opacity: 0; visibility: visible; }}
+            100% {{ opacity: 0; visibility: hidden; z-index: -1; }}
         }}
         </style>
 
@@ -528,25 +552,21 @@ st.markdown("""
   border-radius: 50%;
   transform: translateY(1px);
 }
-
 .pulse-online {
   background: #6EE7B7;
   box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.7);
   animation: pulse-online 1.4s infinite;
 }
-
 @keyframes pulse-online {
   0%   { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.7); }
   70%  { box-shadow: 0 0 0 10px rgba(110, 231, 183, 0.0); }
   100% { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.0); }
 }
-
 .pulse-typing {
   background: #A78BFA;
   box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7);
   animation: pulse-typing 1.2s infinite;
 }
-
 @keyframes pulse-typing {
   0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7); }
   70%  { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0.0); }
@@ -592,12 +612,39 @@ facebook_group_link = get_secret("FACEBOOK_GROUP_LINK", "https://www.facebook.co
 instagram_link = get_secret("INSTAGRAM_LINK", "https://www.instagram.com/jakub.martewicz/")
 youtube_link = get_secret("YOUTUBE_LINK", "https://www.youtube.com/@KomiksowaNawijka")
 
+# ─────────────────────────────────────────────
+# PRZYCISKI — Kup teraz + Resetuj rozmowę
+# ─────────────────────────────────────────────
+
 st.markdown(f"""
 <a href="{buy_link}" target="_blank" rel="noopener noreferrer" class="buy-now-button">
-    <span>🛒</span>
-    <span>Kup teraz</span>
+    🛒 Kup teraz
 </a>
 """, unsafe_allow_html=True)
+
+if "confirm_reset" not in st.session_state:
+    st.session_state.confirm_reset = False
+
+if not st.session_state.confirm_reset:
+    st.markdown("""
+    <div style="height:6px;"></div>
+    """, unsafe_allow_html=True)
+    if st.button("↺  Resetuj rozmowę", key="reset_btn"):
+        st.session_state.confirm_reset = True
+else:
+    st.warning("Na pewno? Ta operacja wyczyści całą rozmowę.")
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        if st.button("✅ Tak, resetuj"):
+            st.session_state.pop("messages", None)
+            st.session_state.confirm_reset = False
+            st.session_state.pop("last_message_time", None)
+            st.session_state.pop("placeholder_idx", None)
+            st.rerun()
+    with c2:
+        if st.button("❌ Anuluj"):
+            st.session_state.confirm_reset = False
+            st.rerun()
 
 if not api_key:
     st.error("Brak OPENAI_API_KEY")
@@ -816,33 +863,6 @@ system_prompt = (
 )
 
 # ─────────────────────────────────────────────
-# RESET BUTTON (with confirmation)
-# ─────────────────────────────────────────────
-
-if "confirm_reset" not in st.session_state:
-    st.session_state.confirm_reset = False
-
-col1, col2 = st.columns([1, 5])
-with col1:
-    if st.button("Resetuj rozmowę"):
-        st.session_state.confirm_reset = True
-
-if st.session_state.confirm_reset:
-    with col2:
-        st.warning("Na pewno? Ta operacja wyczyści całą rozmowę.")
-        c1, c2 = st.columns(2)
-        with c1:
-            if st.button("✅ Tak, resetuj"):
-                st.session_state.pop("messages", None)
-                st.session_state.confirm_reset = False
-                st.session_state.pop("last_message_time", None)
-                st.rerun()
-        with c2:
-            if st.button("❌ Anuluj"):
-                st.session_state.confirm_reset = False
-                st.rerun()
-
-# ─────────────────────────────────────────────
 # INIT MESSAGES
 # ─────────────────────────────────────────────
 
@@ -862,34 +882,39 @@ if "messages" not in st.session_state:
     ]
 
 # ─────────────────────────────────────────────
+# LICZNIK WIADOMOŚCI
+# ─────────────────────────────────────────────
+
+user_msg_count = count_user_messages()
+st.markdown(
+    f'<div style="font-size:12px;color:#555;margin-bottom:4px;">'
+    f'💬 {user_msg_count} / {MAX_USER_MESSAGES} wiadomości</div>',
+    unsafe_allow_html=True
+)
+
+# ─────────────────────────────────────────────
 # CHAT INPUT + SECURITY CHECKS
 # ─────────────────────────────────────────────
 
-question = st.chat_input(
-    "Tutaj wpisz Twoje pytanie i naciśnij Enter lub kliknij strzałkę"
-)
+question = st.chat_input(get_placeholder())
 
 if question and question.strip():
     q = question.strip()
 
-    # 1. Input length limit
     if len(q) > MAX_INPUT_LENGTH:
         st.warning(f"Wiadomość jest za długa (max {MAX_INPUT_LENGTH} znaków). Skróć pytanie i spróbuj ponownie 🙂")
         st.stop()
 
-    # 2. Session message limit
     if count_user_messages() >= MAX_USER_MESSAGES:
         st.warning(
             f"Osiągnięto limit {MAX_USER_MESSAGES} wiadomości w tej sesji. "
-            "Kliknij 'Resetuj rozmowę' żeby zacząć od nowa 🙂"
+            "Kliknij '↺ Resetuj rozmowę' żeby zacząć od nowa 🙂"
         )
         st.stop()
 
-    # 3. Throttle — min time between messages
     if seconds_since_last_message() < MIN_SECONDS_BETWEEN_MESSAGES:
         time.sleep(MIN_SECONDS_BETWEEN_MESSAGES)
 
-    # 4. Suspicious input detection
     if is_suspicious(q):
         deflection = get_deflection()
         st.session_state.messages.append({
@@ -902,7 +927,6 @@ if question and question.strip():
         st.session_state.last_message_time = time.time()
         st.rerun()
 
-    # All checks passed — send to API
     st.session_state.messages.append({
         "role": "user",
         "content": q
@@ -934,14 +958,11 @@ if question and question.strip():
 
     for event in stream:
         now = time.time()
-
         if now - last_tick > 0.15:
             typing_placeholder.markdown(f"_Kaja pisze{dots[i % len(dots)]}_")
             i += 1
             last_tick = now
-
         delta = event.choices[0].delta
-
         if delta and getattr(delta, "content", None):
             full_text += delta.content
             answer_placeholder.markdown(strip_control_tags(full_text))
@@ -976,29 +997,34 @@ st.divider()
 
 for m in st.session_state.messages:
     role = m.get("role", "")
-
     if role not in ("user", "assistant"):
         continue
-
     with st.chat_message(
         role,
         avatar="assets/jakub.png" if role == "assistant" else "🙂"
     ):
         st.markdown(m.get("display_content", m["content"]))
-
         if role == "assistant" and m.get("covers"):
             show_cover_images(m["covers"])
-
         if role == "assistant" and m.get("pages"):
             show_sample_pages(m["pages"])
 
+# ─────────────────────────────────────────────
+# SCROLL DO OSTATNIEJ WIADOMOŚCI
+# ─────────────────────────────────────────────
 
 st.markdown(
     """
     <script>
-    window.scrollTo(0, document.body.scrollHeight);
+    (function() {
+        function scrollToBottom() {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+        scrollToBottom();
+        setTimeout(scrollToBottom, 300);
+        setTimeout(scrollToBottom, 800);
+    })();
     </script>
     """,
     unsafe_allow_html=True
 )
-
